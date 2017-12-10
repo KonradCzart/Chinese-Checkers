@@ -10,7 +10,7 @@ public class SocketClient {
 		
 		
 		
-		      Socket socket;
+		    Socket socket;
 			try {
 				socket = new Socket("localhost", 8189);
 				PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -23,14 +23,18 @@ public class SocketClient {
 					out.println(line2);
 					
 				}
-			} catch (UnknownHostException e) {
+			} 
+			catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (IOException e) {
+			} 
+			catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		      
+		System.out.println("Koniec!");
 
 	}
 
