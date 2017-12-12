@@ -7,10 +7,9 @@ import java.util.*;
 public class SocketClient {
 
 	public static void main(String[] args) {
-		
-		
-		
-		    Socket socket;
+
+		new ClientGUI();
+			Socket socket;
 			try {
 				socket = new Socket("localhost", 8189);
 				PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
