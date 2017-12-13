@@ -7,13 +7,13 @@ import java.util.*;
 
 public class ThreadedServer  implements Runnable
 {
-	private ArrayList<String> client;
+	private ArrayList<ClientHandler> client;
 	private static ThreadedServer instance;
 	
 	
 	private ThreadedServer()
 	{
-		client = new ArrayList<String>();
+		client = new ArrayList<ClientHandler>();
 	}
 	
 	public static ThreadedServer getInstance()
@@ -44,9 +44,9 @@ public class ThreadedServer  implements Runnable
 			{
 				Socket coming = server.accept();
 				
-				//System.out.println("Po��czono" + i);
-				
-				Runnable r = new ThreadedServerHandler(coming, "usr " + i);
+				ClientHandler newClient = new ClientHandler(coming, "usr " + i);
+				client.add(newClient);
+				Runnable r = newClient;
 				Thread t = new Thread(r);
 				t.start();
 				i++;
@@ -62,20 +62,33 @@ public class ThreadedServer  implements Runnable
 		}		
 	}
 	
-	private class ThreadedServerHandler implements Runnable 
+	private class ClientHandler implements Runnable 
 	{
 		
 		private Socket coming;
 		private String name;
 
-		public ThreadedServerHandler(Socket coming, String name) 
+		public ClientHandler(Socket coming, String name) 
 		{
 			
 			this.coming = coming;
 			this.name = name;
-			client.add(name);
+			
+		}
+		public Socket getSocket()
+		{
+			return coming;
 		}
 		
+		public OutputStream getOutputStream() throws IOException
+		{
+			return coming.getOutputStream();
+		}
+		
+		public String getName()
+		{
+			return name;
+		}
 		
 		@Override
 		public void run() {
@@ -94,7 +107,12 @@ public class ThreadedServer  implements Runnable
 				while(in.hasNextLine()) 
 				{
 					String line = in.nextLine();
-					out.println(name + "  says: " + line);
+					for (ClientHandler tmp : client) 
+					{
+						OutputStream outStreamTmp = tmp.getOutputStream();
+						PrintWriter out2 = new PrintWriter(outStreamTmp, true);
+						out2.println( name + " napisal do wszystkich : >" + line + "\n");
+					}
 					
 				}	
 			} 
