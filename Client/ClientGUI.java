@@ -8,6 +8,8 @@ public class ClientGUI extends JFrame
 	private JButton startGameButton;
 	private JButton loginButton;
 	private JTextField playerNameTextField;
+	private JLabel connectedLabel;
+	private JLabel helloLabel;
 	private JLabel enterNameLabel;
 	private JPanel upperPanel;
 	private String playerName;
@@ -65,8 +67,19 @@ public class ClientGUI extends JFrame
 		loginButton.setEnabled(false);
 		remove(upperPanel);
 		upperPanel = new JPanel();
-		upperPanel.setBackground(Color.black);
+		upperPanel.setBackground(Color.white);
 		setLayout(new BorderLayout());
+
+		connectedLabel = new JLabel("You are connected with server! "); //TODO boolean
+		connectedLabel.setForeground(Color.green);
+		helloLabel = new JLabel("Welcome " + playerName);
+		startGameButton = new JButton("Start game!");
+		startGameButton.setFocusPainted(false);
+		getRootPane().setDefaultButton(startGameButton);
+
+		upperPanel.add(helloLabel);
+		upperPanel.add(connectedLabel);
+		upperPanel.add(startGameButton);
 		add(upperPanel, BorderLayout.NORTH);
 		repaint();
 		setVisible(true);
