@@ -12,6 +12,7 @@ public class ClientGUI extends JFrame
 	private JLabel helloLabel;
 	private JLabel enterNameLabel;
 	private JPanel upperPanel;
+	private JPanel gamePanel;
 	private String playerName;
 
 	/**
@@ -66,6 +67,8 @@ public class ClientGUI extends JFrame
 	{
 		loginButton.setEnabled(false);
 		remove(upperPanel);
+		gamePanel = new JPanel();
+		gamePanel.setBackground(Color.cyan);
 		upperPanel = new JPanel();
 		upperPanel.setBackground(Color.white);
 		setLayout(new BorderLayout());
@@ -81,6 +84,7 @@ public class ClientGUI extends JFrame
 		upperPanel.add(connectedLabel);
 		upperPanel.add(startGameButton);
 		add(upperPanel, BorderLayout.NORTH);
+		add(gamePanel);
 		repaint();
 		setVisible(true);
 	}

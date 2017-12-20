@@ -28,7 +28,6 @@ public class ThreadedServer  implements Runnable
 	public ArrayList getClientName()
 	{
 		return client;
-		
 	}
 	
 	@Override
@@ -36,7 +35,6 @@ public class ThreadedServer  implements Runnable
 	{
 		try 
 		{
-			
 			ServerSocket server = new ServerSocket(8189);
 			int i = 1;
 			
@@ -50,9 +48,6 @@ public class ThreadedServer  implements Runnable
 				Thread t = new Thread(r);
 				t.start();
 				i++;
-				
-				
-				
 			}
 			
 		}
@@ -84,8 +79,9 @@ public class ThreadedServer  implements Runnable
 		{
 			return coming.getOutputStream();
 		}
-		
-		public String getName()
+
+		@Override
+		public String toString()
 		{
 			return name;
 		}
