@@ -111,7 +111,7 @@ public class ThreadedServer  implements Runnable
 					{
 						OutputStream outStreamTmp = tmp.getOutputStream();
 						PrintWriter out2 = new PrintWriter(outStreamTmp, true);
-						out2.println( name + " napisal do wszystkich : >" + line + "\n");
+						out2.println( name + " napisal do wszystkich : >" + line );
 					}
 					
 				}	
