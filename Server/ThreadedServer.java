@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import Message.*;
+
+
 
 public class ThreadedServer  implements Runnable
 {
@@ -62,22 +65,36 @@ public class ThreadedServer  implements Runnable
 		
 		private Socket coming;
 		private String name;
-
+		private ObjectOutputStream outStream ;
+		private ObjectInputStream inStream;
+		
+		
 		public ClientHandler(Socket coming, String name) 
 		{
 			
 			this.coming = coming;
 			this.name = name;
+			try {
+				outStream = new ObjectOutputStream ( coming.getOutputStream());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
+		}
+		
+		public ObjectOutputStream getObjectOutputStream()
+		{
+			return outStream;
 		}
 		public Socket getSocket()
 		{
 			return coming;
 		}
 		
-		public OutputStream getOutputStream() throws IOException
+		public String getName()
 		{
-			return coming.getOutputStream();
+			return name;
 		}
 
 		@Override
@@ -92,28 +109,60 @@ public class ThreadedServer  implements Runnable
 			
 			try 
 			{
-				InputStream inStream = coming.getInputStream();
-				OutputStream outStream = coming.getOutputStream();
 				
-				Scanner in = new Scanner(inStream);
-				PrintWriter out = new PrintWriter(outStream, true);
+				Object objectMessage;
+				inStream = new ObjectInputStream(coming.getInputStream());
 				
-				out.println("Witaj " + name + " co u ciebie ?");
-
-				while(in.hasNextLine()) 
+				
+				while((objectMessage = inStream.readObject()) != null) 
 				{
-					String line = in.nextLine();
-					for (ClientHandler tmp : client) 
+					if(objectMessage instanceof ChatMessage)
 					{
-						OutputStream outStreamTmp = tmp.getOutputStream();
-						PrintWriter out2 = new PrintWriter(outStreamTmp, true);
-						out2.println( name + " napisal do wszystkich : >" + line );
+						ChatMessage chatMessage = (ChatMessage) objectMessage;
+						String line = chatMessage.getDescription();
+						
+						for (ClientHandler tmp : client) 
+						{
+							String line2 = name + " >>> " + line;
+							ObjectOutputStream outStream;
+							outStream = tmp.getObjectOutputStream();
+							ChatMessage newMessage = new ChatMessage(line2);
+							outStream.writeObject(newMessage);
+						}
 					}
+					else if(objectMessage instanceof NewNameMessage)
+					{
+						NewNameMessage nameMessage = (NewNameMessage) objectMessage;
+						String newName = nameMessage.getName();
+						Boolean isName = false;
+						
+						for (ClientHandler tmp : client) 
+						{
+							String oldName = tmp.getName();
+							
+							if(oldName.equals(newName))
+							{
+								isName = true;
+								break;
+							}
+						}
+						
+						if(!isName)
+						{
+							name = newName;
+							ChatMessage newMessage = new ChatMessage("Your new name is" + name);
+							outStream.writeObject(newMessage);
+						}
+					}
+
 					
 				}	
 			} 
 			catch (IOException e) 
 			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
