@@ -8,6 +8,16 @@ import Message.ChatMessage;
 
 public class SocketClient {
 
+	/*
+	 * 
+	 * klasa do usuniecia musia³em stworzyæ typowe klase klienta aby ³atwiej mo¿a by³o z nia popracowaæ
+	 * komentarze bêd¹ dodane dzisiaj nie mam czasu 
+	 * zrobione przesylanie obiektów message w których bêd¹ znajdowa³y siê konkretne pola dla konkretnej wiadomoœci np wiadomoœæ
+	 * move bêdzie do ruchu a chat do przesy³ania wiadomoœci miêdzy klientem a serverem
+	 * 
+	 * 
+	 * 
+	 */
 //	public static void main(String[] args) {
 //
 //		new ClientGUI();
