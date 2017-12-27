@@ -1,5 +1,9 @@
 package Game;
 
-public enum FieldStatus {
-
+public enum FieldStatus 
+{
+	UNAVAILABLE,
+	AVAILABLE,
+	CLOSED
+	
 }
