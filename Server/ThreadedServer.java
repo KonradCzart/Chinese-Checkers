@@ -12,6 +12,7 @@ public class ThreadedServer  implements Runnable
 {
 	private ArrayList<ClientHandler> client;
 	private static ThreadedServer instance;
+	private boolean serverRun;
 	
 	
 	private ThreadedServer()
@@ -27,6 +28,11 @@ public class ThreadedServer  implements Runnable
 	     }     
 		 return instance;
 	}
+
+	public boolean isThreadedServerRun()
+	{
+		return serverRun;
+	}
 	
 	public ArrayList getClientName()
 	{
@@ -39,6 +45,7 @@ public class ThreadedServer  implements Runnable
 		try 
 		{
 			ServerSocket server = new ServerSocket(8189);
+			serverRun = true;
 			int i = 1;
 			
 			while(true) 
