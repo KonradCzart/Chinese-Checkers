@@ -6,7 +6,10 @@ import java.util.*;
 
 import Message.*;
 
-
+/** 
+* @author Konrad Czart
+* Server class with multi thread connection in client
+*/ 
 
 public class ThreadedServer  implements Runnable
 {
@@ -20,8 +23,12 @@ public class ThreadedServer  implements Runnable
 		client = new ArrayList<ClientHandler>();
 	}
 	
+	/**
+	 * @return instance ThreadedServer (Singleton)
+	 */
 	public static ThreadedServer getInstance()
 	{
+		
 		 if(instance == null) 
 		 {
 			 instance = new ThreadedServer();
@@ -34,9 +41,19 @@ public class ThreadedServer  implements Runnable
 		return serverRun;
 	}
 	
+	
+	/**
+	 * @return ArrayList<String> with name client connect with server
+	 */
 	public ArrayList getClientName()
 	{
-		return client;
+		ArrayList<String> clientName = new ArrayList<String>();
+		
+		for (ClientHandler tmp : client)
+		{
+			clientName.add(tmp.getName());
+		}
+		return clientName;
 	}
 	
 	@Override
@@ -67,6 +84,7 @@ public class ThreadedServer  implements Runnable
 		}		
 	}
 	
+	// internal class client
 	private class ClientHandler implements Runnable 
 	{
 		

@@ -52,12 +52,12 @@ public class ServerFrame extends JFrame
 		
 		clientButton.addActionListener(event ->
 		{
-			ArrayList<String> myList = myServer.getClientName();
+			//ArrayList<String> myList = myServer.getClientName();
 			
-			for (String tmp : myList) 
-			{
-				messages.append(tmp);
-			}
+//			for (String tmp : myList) 
+//			{
+//				messages.append(tmp);
+//			}
 		});
 		
 		
