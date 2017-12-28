@@ -12,7 +12,7 @@ import Message.*;
 * Server class with multi thread connection in client
 */ 
 
-public class ThreadedServer extends Observable implements Runnable {
+public class ThreadedServer implements Runnable {
 	private ArrayList<ClientHandler> client;
 	private static ThreadedServer instance;
 	private boolean serverRun;
@@ -82,16 +82,6 @@ public class ThreadedServer extends Observable implements Runnable {
 		{			
 			e.printStackTrace();
 		}		
-	}
-
-	/**
-	 * It's called when a player moves
-	 * Server sends info about move.
-	 */
-	public void movementChanged()
-	{
-		setChanged();
-		notifyObservers();
 	}
 
 	// internal class client
