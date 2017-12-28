@@ -9,15 +9,31 @@ public class Game
 {
 	private Field[][] tabField;
 	private int countPlayer;
+	private int currentPlayer;
+	private Boolean start;
+	private int id;
 	
 	private ArrayList<Pawn> tabPawn;
 	
-	public Game()
+	public Game(int id)
 	{
+		this.id = id;
+		currentPlayer = 0;
 		tabField = new Field[19][19];
 		tabPawn = new ArrayList<Pawn>();
 		
-		createBoard();	
+		createBoard();
+		start = false;
+	}
+	
+	public void endMove(ColorPlayer movePlayer) throws BadPlayerException
+	{
+		ColorPlayer queuePlayer = ColorPlayer.values()[currentPlayer];
+		
+		if(movePlayer != queuePlayer)
+			throw new BadPlayerException();
+		
+		currentPlayer = (currentPlayer + 1) % countPlayer;
 	}
 	
 	public void move(ColorPlayer movePlayer, int oldX, int oldY, int newX, int newY) throws BadPlayerException, IncorrectMoveException
@@ -26,6 +42,11 @@ public class Game
 		Boolean correctMove;
 		int pawnX = -10;
 		int pawnY = -10;
+		
+		ColorPlayer queuePlayer = ColorPlayer.values()[currentPlayer];
+		
+		if(movePlayer != queuePlayer)
+			throw new BadPlayerException();
 		
 		for (Pawn tmp : tabPawn)
 		{
@@ -58,47 +79,56 @@ public class Game
 	}
 		
 	
-		
+	public int getID()
+	{
+		return id;
+	}
+	
+	public void startGame()
+	{
+		start = true;
+	}
 	
 	public ColorPlayer addPalyer()
 	{
 		
-		if(countPlayer == 0)
+		if(countPlayer == 0 && !start)
 		{
 			addPawn(ColorPlayer.PLAYER_ONE, Zone.ZONE_ONE);
 			countPlayer++;
+			currentPlayer = 0;
 			
 			return ColorPlayer.PLAYER_ONE;
 		}
-		else if(countPlayer == 1)
+		else if(countPlayer == 1  && !start)
 		{
 			addPawn(ColorPlayer.PLAYER_TWO, Zone.ZONE_FOUR);
 			countPlayer++;
 			
 			return ColorPlayer.PLAYER_TWO;
 		}
-		else if(countPlayer == 2)
+		else if(countPlayer == 2  && !start)
 		{
 			addPawn(ColorPlayer.PLAYER_THREE, Zone.ZONE_TWO);
 			countPlayer++;
 			
 			return ColorPlayer.PLAYER_THREE;
 		}
-		else if(countPlayer == 3)
+		else if(countPlayer == 3 && !start)
 		{
 			addPawn(ColorPlayer.PLAYER_FOUR, Zone.ZONE_FIVE);
 			countPlayer++;
 			
 			return ColorPlayer.PLAYER_FOUR;
 		}
-		else if(countPlayer == 4)
+		else if(countPlayer == 4 && !start)
 		{
 			addPawn(ColorPlayer.PLAYER_FIVE, Zone.ZONE_THREE);
 			countPlayer++;
 			
 			return ColorPlayer.PLAYER_FIVE;
 		}
-		else if(countPlayer == 5)
+		else if(countPlayer == 5 && !start)
 		{
 			addPawn(ColorPlayer.PLAYER_SIX, Zone.ZONE_SIX);
 			countPlayer++;
@@ -330,12 +360,12 @@ public class Game
 		
 		for(i=14; i<18; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < 5; j++)
 				tabField[i][j] = new Field(FieldStatus.CLOSED, Zone.ZONE_EMPTY);
 			
-			int tmp = k + 4;
+			int tmp = k + 5;
 			
-			for(int j = 4; j < tmp; j++)
+			for(int j = 5; j < tmp; j++)
 				tabField[i][j] = new Field(FieldStatus.AVAILABLE, Zone.ZONE_FOUR);
 			
 			for(int j = tmp; j < 19; j++)
