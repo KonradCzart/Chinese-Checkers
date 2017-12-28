@@ -2,11 +2,11 @@ package Game;
 
 public enum ColorPlayer 
 {
-	RED,
-	BLUE,
-	YELLOW,
-	GREEN,
-	BROWN,
-	ORANGE,
-	EMPTY
+	PLAYER_ONE,
+	PLAYER_TWO,
+	PLAYER_THREE,
+	PLAYER_FOUR,
+	PLAYER_FIVE,
+	PLAYER_SIX,
+	PLAYER_EMPTY
 }
