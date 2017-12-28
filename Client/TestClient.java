@@ -1,6 +1,7 @@
 package Client;
 
 import java.io.IOException;
+import java.util.Observable;
 import java.util.Scanner;
 
 import Message.*;
@@ -10,7 +11,7 @@ public class TestClient {
 
 	public static void main(String[] args) 
 	{
-		Client newClient = new Client();
+		Client newClient = new Client(new Observable());
 		newClient.connectServer();
 		
 		Scanner inn = new Scanner(System.in);

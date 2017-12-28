@@ -4,8 +4,6 @@ import Client.SocketClient;
 import Server.ThreadedServer;
 import org.junit.*;
 
-import java.util.ArrayList;
-
 import static org.junit.Assert.*;
 
 /**
@@ -14,15 +12,19 @@ import static org.junit.Assert.*;
 public class ThreadedServerTest {
 
 	ThreadedServer server;
+	Thread serverThread;
 
 	@Before
 	public void setUp()
 	{
-		Thread serverThread;
 		server = ThreadedServer.getInstance();
-		Runnable r = server;
-		serverThread = new Thread(r);
-		serverThread.start();
+		if(server.isThreadedServerRun())
+		{
+			Runnable r = server;
+			serverThread = new Thread(r);
+			serverThread.start();
+			new SocketClient();
+		}
 	}
 
 	@After
@@ -37,14 +39,8 @@ public class ThreadedServerTest {
 		assertNotNull(server);
 	}
 
-	@Test
+	@Test(timeout=1000)
 	public void getClientName() throws Exception {
-		new SocketClient();
-		Assert.assertNotNull(server.getClientName().get(0));
+		assertNotNull(server.getClientName().get(0));
 	}
-
-	@Test
-	public void run() throws Exception {
-	}
-
 }
