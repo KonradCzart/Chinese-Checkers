@@ -4,71 +4,254 @@ import java.util.ArrayList;
 
 
 
+
 public class Game 
 {
 	private Field[][] tabField;
 	private int countPlayer;
+	private int currentPlayer;
+	private Boolean start;
+	private int id;
 	
 	private ArrayList<Pawn> tabPawn;
 	
-	public Game()
+	public Game(int id)
 	{
+		this.id = id;
+		currentPlayer = 0;
 		tabField = new Field[19][19];
 		tabPawn = new ArrayList<Pawn>();
 		
-		createBoard();	
+		createBoard();
+		start = false;
+	}
+	
+	public void endMove(ColorPlayer movePlayer) throws BadPlayerException
+	{
+		ColorPlayer queuePlayer = ColorPlayer.values()[currentPlayer];
+		
+		if(movePlayer != queuePlayer)
+			throw new BadPlayerException();
+		
+		currentPlayer = (currentPlayer + 1) % countPlayer;
+	}
+	
+	public void move(ColorPlayer movePlayer, int oldX, int oldY, int newX, int newY) throws BadPlayerException, IncorrectMoveException
+	{
+		Pawn currentPawn = null;
+		Boolean correctMove;
+		int pawnX = -10;
+		int pawnY = -10;
+		
+		ColorPlayer queuePlayer = ColorPlayer.values()[currentPlayer];
+		
+		if(movePlayer != queuePlayer)
+			throw new BadPlayerException();
+		
+		for (Pawn tmp : tabPawn)
+		{
+			pawnX = tmp.getX();
+			pawnY = tmp.getY();
+			
+			if(oldX == pawnX && oldY == pawnY)
+			{
+				currentPawn = tmp;
+				break;
+			}
+		}
+		
+		if(currentPawn.getPlayer() != movePlayer)
+				throw new BadPlayerException();
+		
+		correctMove = this.moveValidate(pawnX, pawnY, newX, newY, true);
+		
+		if(!correctMove)
+			throw new IncorrectMoveException();
+		else
+		{
+			currentPawn.setX(newX);
+			currentPawn.setY(newY);
+			
+			tabField[pawnX][pawnY].setFieldStatus(FieldStatus.AVAILABLE);
+			tabField[newX][newY].setFieldStatus(FieldStatus.UNAVAILABLE);
+		}
+		
+	}
+		
+	
+	public int getID()
+	{
+		return id;
+	}
+	
+	public void startGame()
+	{
+		start = true;
 	}
 	
 	public ColorPlayer addPalyer()
 	{
 		
-		if(countPlayer == 0)
+		if(countPlayer == 0 && !start)
 		{
-			addPawn(ColorPlayer.BLUE, Zone.ZONE_ONE);
+			addPawn(ColorPlayer.PLAYER_ONE, Zone.ZONE_ONE);
 			countPlayer++;
+			currentPlayer = 0;
 			
-			return ColorPlayer.BLUE;
+			return ColorPlayer.PLAYER_ONE;
 		}
-		else if(countPlayer == 1)
+		else if(countPlayer == 1  && !start)
 		{
-			addPawn(ColorPlayer.BROWN, Zone.ZONE_FOUR);
+			addPawn(ColorPlayer.PLAYER_TWO, Zone.ZONE_FOUR);
 			countPlayer++;
 			
-			return ColorPlayer.BROWN;
+			return ColorPlayer.PLAYER_TWO;
 		}
-		else if(countPlayer == 2)
+		else if(countPlayer == 2  && !start)
 		{
-			addPawn(ColorPlayer.GREEN, Zone.ZONE_TWO);
+			addPawn(ColorPlayer.PLAYER_THREE, Zone.ZONE_TWO);
 			countPlayer++;
 			
-			return ColorPlayer.GREEN;
+			return ColorPlayer.PLAYER_THREE;
 		}
-		else if(countPlayer == 3)
+		else if(countPlayer == 3 && !start)
 		{
-			addPawn(ColorPlayer.ORANGE, Zone.ZONE_FIVE);
+			addPawn(ColorPlayer.PLAYER_FOUR, Zone.ZONE_FIVE);
 			countPlayer++;
 			
-			return ColorPlayer.ORANGE;
+			return ColorPlayer.PLAYER_FOUR;
 		}
-		else if(countPlayer == 4)
+		else if(countPlayer == 4 && !start)
 		{
-			addPawn(ColorPlayer.RED, Zone.ZONE_THREE);
+			addPawn(ColorPlayer.PLAYER_FIVE, Zone.ZONE_THREE);
 			countPlayer++;
 			
-			return ColorPlayer.RED;
+			return ColorPlayer.PLAYER_FIVE;
 		}
-		else if(countPlayer == 5)
+		else if(countPlayer == 5 && !start)
 		{
-			addPawn(ColorPlayer.YELLOW, Zone.ZONE_SIX);
+			addPawn(ColorPlayer.PLAYER_SIX, Zone.ZONE_SIX);
 			countPlayer++;
 			
-			return ColorPlayer.YELLOW;
+			return ColorPlayer.PLAYER_SIX;
 		}
 		else
 		{
-			return ColorPlayer.EMPTY;
+			return ColorPlayer.PLAYER_EMPTY;
 		}
 
+	}
+	
+	public Boolean moveValidate(int oldX, int oldY, int newX, int newY, Boolean first)
+	{
+		int tmpX;
+		int tmpY;
+		
+		if(newX >= 19 || newX < 0 || newY >= 19 || newY < 0)
+			return false;
+		
+		FieldStatus newFieldStatus = tabField[newX][newY].getFieldStatus();
+		FieldStatus tmpStatus;
+		
+		if(newFieldStatus != FieldStatus.AVAILABLE)
+			return false;
+		
+		//upper right (1)
+		
+		tmpX = oldX - 1;
+		tmpY = oldY + 1;
+		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
+		
+		if(tmpX == newX && tmpY == newY)
+			return true;
+		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		{
+			Boolean second;
+			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
+			if(second)
+				return true;
+		}
+		
+		//right (2)
+		
+		tmpX = oldX;
+		tmpY = oldY + 1;
+		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
+			
+		if(tmpX == newX && tmpY == newY)
+			return true;
+		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		{
+			Boolean second;
+			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
+			if(second)
+				return true;
+		}
+
+		//down (3)
+		
+		tmpX = oldX + 1;
+		tmpY = oldY ;
+		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
+			
+		if(tmpX == newX && tmpY == newY)
+			return true;
+		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		{
+			Boolean second;
+			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
+			if(second)
+				return true;
+		}
+		
+		//down left (4)
+		
+		tmpX = oldX +1;
+		tmpY = oldY -1;
+		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
+			
+		if(tmpX == newX && tmpY == newY)
+			return true;
+		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		{
+			Boolean second;
+			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
+			if(second)
+				return true;
+		}		
+		//left (5)
+		
+		tmpX = oldX;
+		tmpY = oldY - 1;
+		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
+			
+		if(tmpX == newX && tmpY == newY)
+			return true;
+		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		{
+			Boolean second;
+			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
+			if(second)
+				return true;
+		}
+		
+		//upper (6)
+		
+		tmpX = oldX - 1;
+		tmpY = oldY;
+		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
+			
+		if(tmpX == newX && tmpY == newY)
+			return true;
+		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		{
+			Boolean second;
+			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
+			if(second)
+				return true;
+		}		
+		
+		return false;
 	}
 	
 	private void addPawn(ColorPlayer color, Zone newZone)
@@ -177,12 +360,12 @@ public class Game
 		
 		for(i=14; i<18; i++)
 		{
-			for(int j = 0; j < 4; j++)
+			for(int j = 0; j < 5; j++)
 				tabField[i][j] = new Field(FieldStatus.CLOSED, Zone.ZONE_EMPTY);
 			
-			int tmp = k + 4;
+			int tmp = k + 5;
 			
-			for(int j = 4; j < tmp; j++)
+			for(int j = 5; j < tmp; j++)
 				tabField[i][j] = new Field(FieldStatus.AVAILABLE, Zone.ZONE_FOUR);
 			
 			for(int j = tmp; j < 19; j++)
