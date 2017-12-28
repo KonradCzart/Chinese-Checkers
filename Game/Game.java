@@ -63,7 +63,7 @@ public class Game
 		if(currentPawn.getPlayer() != movePlayer)
 				throw new BadPlayerException();
 		
-		correctMove = this.moveValidate(pawnX, pawnY, newX, newY, true);
+		correctMove = this.moveValidate(pawnX, pawnY, newX, newY);
 		
 		if(!correctMove)
 			throw new IncorrectMoveException();
@@ -142,7 +142,7 @@ public class Game
 
 	}
 	
-	public Boolean moveValidate(int oldX, int oldY, int newX, int newY, Boolean first)
+	public Boolean moveValidate(int oldX, int oldY, int newX, int newY)
 	{
 		int tmpX;
 		int tmpY;
@@ -164,11 +164,12 @@ public class Game
 		
 		if(tmpX == newX && tmpY == newY)
 			return true;
-		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
-			Boolean second;
-			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
-			if(second)
+			tmpX = tmpX - 1;
+			tmpY = tmpY + 1;
+			
+			if(tmpX == newX && tmpY == newY)
 				return true;
 		}
 		
@@ -180,11 +181,12 @@ public class Game
 			
 		if(tmpX == newX && tmpY == newY)
 			return true;
-		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
-			Boolean second;
-			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
-			if(second)
+			tmpX = tmpX;
+			tmpY = tmpY + 1;
+			
+			if(tmpX == newX && tmpY == newY)
 				return true;
 		}
 
@@ -196,11 +198,12 @@ public class Game
 			
 		if(tmpX == newX && tmpY == newY)
 			return true;
-		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
-			Boolean second;
-			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
-			if(second)
+			tmpX = tmpX + 1;
+			tmpY = tmpY;
+			
+			if(tmpX == newX && tmpY == newY)
 				return true;
 		}
 		
@@ -212,11 +215,12 @@ public class Game
 			
 		if(tmpX == newX && tmpY == newY)
 			return true;
-		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
-			Boolean second;
-			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
-			if(second)
+			tmpX = tmpX + 1;
+			tmpY = tmpY - 1;
+			
+			if(tmpX == newX && tmpY == newY)
 				return true;
 		}		
 		//left (5)
@@ -227,11 +231,12 @@ public class Game
 			
 		if(tmpX == newX && tmpY == newY)
 			return true;
-		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
-			Boolean second;
-			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
-			if(second)
+			tmpX = tmpX;
+			tmpY = tmpY - 1;
+			
+			if(tmpX == newX && tmpY == newY)
 				return true;
 		}
 		
@@ -243,11 +248,12 @@ public class Game
 			
 		if(tmpX == newX && tmpY == newY)
 			return true;
-		else if(tmpStatus == FieldStatus.UNAVAILABLE && first)
+		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
-			Boolean second;
-			second = this.moveValidate(tmpX, tmpY, newX, newY, false);
-			if(second)
+			tmpX = tmpX - 1;
+			tmpY = tmpY;
+			
+			if(tmpX == newX && tmpY == newY)
 				return true;
 		}		
 		
