@@ -12,6 +12,8 @@ import Server.ThreadedServer;
 
 public class Client implements Observer
 {
+	
+	//koment konrad
 	private Socket socket;
 	private ServerListener serverLisener;
 	private ObjectOutputStream outStream;
