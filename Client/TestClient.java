@@ -11,7 +11,7 @@ public class TestClient {
 
 	public static void main(String[] args) 
 	{
-		Client newClient = new Client(new Observable());
+		Client newClient = new Client();
 		newClient.connectServer();
 		
 		Scanner inn = new Scanner(System.in);
@@ -37,6 +37,26 @@ public class TestClient {
 			{
 				line2 = inn.nextLine();
 				NewNameMessage newMessage = new NewNameMessage(line2);
+				
+				try {
+					newClient.sendMessage(newMessage);
+				} catch (IOException e) {
+					System.out.println("sending failed!");
+				}
+			}
+			else if(line2.equals("game"))
+			{
+				int tmp = inn.nextInt();
+				JoinGameMessage newMessage;
+				
+				
+				if(tmp == 0)
+				{
+					newMessage = new JoinGameMessage(0, true);
+				}
+				else
+					newMessage = new JoinGameMessage(tmp, false);
+				
 				
 				try {
 					newClient.sendMessage(newMessage);
