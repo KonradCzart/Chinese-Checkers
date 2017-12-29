@@ -14,7 +14,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-
 import java.util.Optional;
 import java.util.Random;
 
@@ -27,6 +26,8 @@ public class GameScreen
 	private String playerName;
 	private Stage stage;
 	private HBox hbox;
+	private TextField chatField;
+	private Button sendChatButton;
 
 	GameScreen(String playerName, Stage stage)
 	{
@@ -42,8 +43,7 @@ public class GameScreen
 
 		MenuBar menuBar = new MenuBar();
 		Menu menuFile = new Menu("File");
-		Menu menuEdit = new Menu("Edit");
-		Menu menuView = new Menu("View");
+		Menu menuInfo = new Menu("Info");
 
 		MenuItem changeServer = new MenuItem(("Change Server"));
 		changeServer.setOnAction(t -> changeServer());
@@ -51,7 +51,7 @@ public class GameScreen
 		exit.setOnAction(t -> System.exit(0));
 
 		menuFile.getItems().addAll(changeServer, new SeparatorMenuItem(), exit);
-		menuBar.getMenus().addAll(menuFile, menuEdit, menuView);
+		menuBar.getMenus().addAll(menuFile, menuInfo);
 
 		hbox.getChildren().add(menuBar);
 		hbox = addHBox();
@@ -61,7 +61,7 @@ public class GameScreen
 
 		addStackPane(hbox);
 		border.setCenter(addGridPane());
-		border.setRight(addFlowPane());
+		border.setRight(addBorderPane());
 
 		scene = new Scene(border, 1024, 768);
 		stage.setScene(scene);
@@ -75,12 +75,12 @@ public class GameScreen
 		hbox.setSpacing(10);
 		hbox.setStyle("-fx-background-color: #336699;");
 
-		Button buttonCurrent = new Button("Current");
-		buttonCurrent.setPrefSize(100, 20);
-
-		Button buttonProjected = new Button("Projected");
-		buttonProjected.setPrefSize(100, 20);
-		hbox.getChildren().addAll(buttonCurrent, buttonProjected);
+//		Button buttonCurrent = new Button("Current");
+//		buttonCurrent.setPrefSize(100, 20);
+//
+//		Button buttonProjected = new Button("Projected");
+//		buttonProjected.setPrefSize(100, 20);
+//		hbox.getChildren().addAll(buttonCurrent, buttonProjected);
 
 		return hbox;
 	}
@@ -194,19 +194,31 @@ public class GameScreen
 		return grid;
 	}
 
-	public FlowPane addFlowPane() {
-		FlowPane flow = new FlowPane();
-		flow.setPadding(new Insets(5, 0, 5, 0));
-		flow.setVgap(4);
-		flow.setHgap(4);
-		flow.setPrefWrapLength(170); // preferred width allows for two columns
+	private BorderPane addBorderPane() {
+		BorderPane flow = new BorderPane();
+		flow.setPadding(new Insets(5, 5, 10, 5));
+		flow.setMinWidth(240);
+		flow.setMaxWidth(240);
 		flow.setStyle("-fx-background-color: DAE6F3;");
 
-		Button pages[] = new Button[8];
-		for (int i=0; i<8; i++) {
-			pages[i] = new Button(i + "!");
-			flow.getChildren().add(pages[i]);
-		}
+		chatField = new TextField();
+		sendChatButton = new Button("     Send     ");
+		sendChatButton.setOnAction(event ->
+		{
+			String message = chatField.getText();
+			if(!message.equals(""))
+			{
+				sendToChat(chatField.getText());
+				chatField.setText("");
+			}
+		});
+
+		GridPane tmpGrid = new GridPane();
+		tmpGrid.add(chatField, 1, 0);
+		tmpGrid.add(sendChatButton, 2, 0);
+
+		flow.setBottom(tmpGrid);
+
 		return flow;
 	}
 
@@ -221,11 +233,9 @@ public class GameScreen
 		Random rand = new Random();
 		Color[] colors = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED};
 
-		int n = rand.nextInt(4)+1;
-
 		for (int row = 0; row < rowNum; row++) {
 			for (int col = 0; col < colNum; col++) {
-				n = rand.nextInt(4);
+				int n = rand.nextInt(4);
 				Rectangle rec = new Rectangle();
 				rec.setWidth(50);
 				rec.setHeight(50);
@@ -235,5 +245,10 @@ public class GameScreen
 				grid.getChildren().addAll(rec);
 			}
 		}
+	}
+
+	public void sendToChat(String chat)
+	{
+		System.out.println(chat);
 	}
 }
