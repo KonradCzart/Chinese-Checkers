@@ -103,13 +103,16 @@ public class LoadingScreen
 			if (name.matches("[\\w]+"))
 			{
 				connectingText.setFill(Color.GREEN);
-				connectingText.setSmooth(true);
 				connectingText.setText("Connecting...");
+				connectingText.isVisible();
 				playerName = name;
-				try {
+
+				try
+				{
 					myClient.connectServer();
 					new GameScreen(playerName, stage, myClient);
-				} catch (IOException e) {
+				}
+				catch (IOException e) {
 					connectingText.setFill(Color.RED);
 					connectingText.setText("Connection failed.");
 				}

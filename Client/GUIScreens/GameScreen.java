@@ -216,7 +216,7 @@ public class GameScreen
 		flow.setStyle("-fx-background-color: DAE6F3;");
 
 		chatField = new TextField();
-		sendChatButton = new Button(" Send ");
+		sendChatButton = new Button("Send");
 		sendChatButton.setOnAction(event ->
 		{
 			String message = chatField.getText();
