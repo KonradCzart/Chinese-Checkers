@@ -37,7 +37,8 @@ public class ServerListener implements Runnable
 				{
 					ChatMessage chat = (ChatMessage) tmp;
 					String line = chat.getDescription();			
-					System.out.println(line);
+					//System.out.println(line);
+					game.sendToChat(line);
 
 				}
 				

@@ -17,17 +17,25 @@ public class Client
 	private ServerListener serverLisener;
 	private ObjectOutputStream outStream;
 	// pppp
+	private String localHost;
+	private int adress;
 
 	
 	public Client()
 	{
-
+		localHost = "localhost";
+		adress = 8189;
+	}
+	public Client(String localHost, int adress)
+	{
+		this.localHost = localHost;
+		this.adress = adress;
 	}
 	
 	public void connectServer() throws UnknownHostException, IOException
 	{
 		
-			socket = new Socket("localhost", 8189);
+			socket = new Socket(localHost, adress);
 		
 			outStream = new ObjectOutputStream ( socket.getOutputStream());
 	}

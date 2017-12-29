@@ -1,5 +1,8 @@
 package Client.GUIScreens;
 
+import java.io.IOException;
+
+import Client.Client;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,6 +30,7 @@ public class LoadingScreen
 	private String playerName;
 	private String hostname;
 	private int port;
+	private Client myClient;
 
 	public LoadingScreen(Stage primaryStage)
 	{
@@ -41,6 +45,7 @@ public class LoadingScreen
 		stage.setScene(scene);
 		this.hostname = hostname;
 		this.port = port;
+		myClient = new Client(hostname,port);
 	}
 
 	public void load()
@@ -101,7 +106,13 @@ public class LoadingScreen
 				connectingText.setSmooth(true);
 				connectingText.setText("Connecting...");
 				playerName = name;
-				new GameScreen(playerName, stage);
+				try {
+					myClient.connectServer();
+					new GameScreen(playerName, stage, myClient);
+				} catch (IOException e) {
+					// for Kacper
+				}
+				
 			}
 			else
 			{

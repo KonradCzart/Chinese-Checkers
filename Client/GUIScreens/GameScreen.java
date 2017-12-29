@@ -14,8 +14,14 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Random;
+
+import Client.Client;
+import Message.ChatMessage;
+import Message.NewNameMessage;
 
 /**
  * Created by Kacper on 2017-12-29.
@@ -28,11 +34,22 @@ public class GameScreen
 	private HBox hbox;
 	private TextField chatField;
 	private Button sendChatButton;
+	private Client myClient;
 
-	GameScreen(String playerName, Stage stage)
+	GameScreen(String playerName, Stage stage, Client myClient)
 	{
 		this.stage = stage;
 		this.playerName = playerName;
+		//create client and send message with new name
+		this.myClient = myClient;
+		this.myClient.startServerLisener(this);
+		NewNameMessage newMessage = new NewNameMessage(playerName);
+		try {
+			this.myClient.sendMessage(newMessage);
+		} catch (IOException e) {
+			System.out.println("fail!");
+		}
+		
 		hbox = new HBox();
 		load();
 	}
@@ -205,7 +222,14 @@ public class GameScreen
 			String message = chatField.getText();
 			if(!message.equals(""))
 			{
-				sendToChat(chatField.getText());
+				String line = chatField.getText();
+				ChatMessage newMessage = new ChatMessage(line);
+				try {
+					myClient.sendMessage(newMessage);
+				} catch (IOException e) {
+					System.out.println("fail2");
+				}
+				sendToChat(line);
 				chatField.setText("");
 			}
 		});
