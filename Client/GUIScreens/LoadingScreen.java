@@ -15,9 +15,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
- * Created by Kacper on 2017-12-29.
+ * Loading Screen for user
  */
-public class LoadingScreen extends Group
+public class LoadingScreen
 {
 	private Stage stage;
 	private Scene scene;
@@ -76,11 +76,6 @@ public class LoadingScreen extends Group
 		grid.setBackground(new Background(new BackgroundFill(Color.valueOf("#2c2f33"), CornerRadii.EMPTY, Insets.EMPTY)));
 
 		performLoginButton();
-	}
-
-	public GridPane getPane()
-	{
-		return grid;
 	}
 
 	/**
