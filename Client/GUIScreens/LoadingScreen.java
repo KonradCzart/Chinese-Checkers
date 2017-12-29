@@ -19,12 +19,12 @@ import javafx.stage.Stage;
  */
 public class LoadingScreen extends Group
 {
-	Stage stage;
-	Scene scene;
-	GridPane grid;
-	Button btn;
-	TextField userTextField;
-	Text connectingText;
+	private Stage stage;
+	private Scene scene;
+	private GridPane grid;
+	private Button btn;
+	private TextField userTextField;
+	private Text connectingText;
 	private String playerName;
 
 	public LoadingScreen(Stage primaryStage)

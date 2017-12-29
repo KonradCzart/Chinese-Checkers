@@ -15,7 +15,7 @@ public class ClientGUI extends Application
 		primaryStage.setTitle("Chinese Checkers Game");
 		primaryStage.setMinHeight(450);
 		primaryStage.setMinWidth(850);
-//		primaryStage.setResizable(false);
+
 
 		new LoadingScreen(primaryStage);
 

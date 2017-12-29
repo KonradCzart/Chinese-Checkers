@@ -56,7 +56,7 @@ public class GameScreen
 
 		border.setTop(hbox);
 //		border.setLeft(addVBox());
-//
+
 		addStackPane(hbox);
 		border.setCenter(addGridPane());
 		border.setRight(addFlowPane());
