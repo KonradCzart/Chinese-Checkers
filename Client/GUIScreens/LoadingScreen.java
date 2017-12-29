@@ -110,7 +110,8 @@ public class LoadingScreen
 					myClient.connectServer();
 					new GameScreen(playerName, stage, myClient);
 				} catch (IOException e) {
-					// for Kacper
+					connectingText.setFill(Color.RED);
+					connectingText.setText("Connection failed.");
 				}
 				
 			}
