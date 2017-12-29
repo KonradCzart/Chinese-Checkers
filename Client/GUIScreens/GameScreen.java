@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
 
@@ -35,6 +36,8 @@ public class GameScreen
 	private TextField chatField;
 	private Button sendChatButton;
 	private Client myClient;
+	private ArrayList<Text> chatList;
+	private VBox chatBox;
 
 	GameScreen(String playerName, Stage stage, Client myClient)
 	{
@@ -49,6 +52,8 @@ public class GameScreen
 		} catch (IOException e) {
 			System.out.println("fail!");
 		}
+
+		chatList = new ArrayList<>();
 		
 		hbox = new HBox();
 		load();
@@ -155,30 +160,6 @@ public class GameScreen
 		result.ifPresent(usernamePassword -> new LoadingScreen(stage));
 	}
 
-	private VBox addVBox()
-	{
-		VBox vbox = new VBox();
-		vbox.setPadding(new Insets(10));
-		vbox.setSpacing(8);
-
-		Text title = new Text("Data");
-		title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-		vbox.getChildren().add(title);
-
-		Hyperlink options[] = new Hyperlink[] {
-				new Hyperlink("Sales"),
-				new Hyperlink("Marketing"),
-				new Hyperlink("Distribution"),
-				new Hyperlink("Costs")};
-
-		for (int i=0; i<4; i++) {
-			VBox.setMargin(options[i], new Insets(0, 0, 0, 8));
-			vbox.getChildren().add(options[i]);
-		}
-
-		return vbox;
-	}
-
 	public void addStackPane(HBox hb) {
 		StackPane stack = new StackPane();
 		Text helpText = new Text("You are connected!");
@@ -208,6 +189,12 @@ public class GameScreen
 		return grid;
 	}
 
+	private void addTextToChat()
+	{
+			VBox.setMargin(chatList.get(chatList.size()-1), new Insets(0, 0, 0, 8));
+			chatBox.getChildren().add(chatList.get(chatList.size()-1));
+	}
+
 	private BorderPane addBorderPane() {
 		BorderPane flow = new BorderPane();
 		flow.setPadding(new Insets(5, 5, 10, 5));
@@ -215,6 +202,7 @@ public class GameScreen
 		flow.setMaxWidth(240);
 		flow.setStyle("-fx-background-color: DAE6F3;");
 
+		chatBox = new VBox();
 		chatField = new TextField();
 		sendChatButton = new Button("Send");
 		sendChatButton.setOnAction(event ->
@@ -224,19 +212,35 @@ public class GameScreen
 			{
 				String line = chatField.getText();
 				ChatMessage newMessage = new ChatMessage(line);
-				try {
+				try
+				{
 					myClient.sendMessage(newMessage);
-				} catch (IOException e) {
-					System.out.println("fail2");
+					chatField.setText("");
+					addTextToChat();
+					//flow.setTop(chatBox);
 				}
-				chatField.setText("");
+				catch (IOException e)
+				{
+					System.out.println("Send message fail");
+				}
 			}
 		});
+
+		chatBox.setPadding(new Insets(10));
+		chatBox.setSpacing(8);
+		Text title = new Text("CHAT");
+		title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+		chatBox.getChildren().add(title);
+		flow.setTop(chatBox);
+
+		chatList.add(new Text("TEST1"));
+		chatList.add(new Text("TEST2"));
+		chatList.add(new Text("TEST3"));
 
 		GridPane tmpGrid = new GridPane();
 		tmpGrid.setPadding(new Insets(5, 5,0,5));
 		tmpGrid.add(chatField, 0, 0);
-		tmpGrid.add(new Label("    "), 1, 1);
+		tmpGrid.add(new Label(" "), 1, 1);
 		tmpGrid.add(sendChatButton, 2, 0);
 
 		flow.setBottom(tmpGrid);
@@ -271,6 +275,7 @@ public class GameScreen
 
 	public void sendToChat(String chat)
 	{
+		chatList.add(new Text(chat));
 		System.out.println(chat);
 	}
 }
