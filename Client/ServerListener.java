@@ -5,19 +5,20 @@ import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.Scanner;
 
-
-
+import Client.GUIScreens.GameScreen;
 import Message.*;
 
 public class ServerListener implements Runnable
 {
 	Socket currentSocket;
 	Object tmp;
+	private GameScreen game;
 
 	
-	public ServerListener(Socket socket)
+	public ServerListener(Socket socket, GameScreen game)
 	{
 		currentSocket = socket;
+		this.game = game;
 
 	}
 	@Override
