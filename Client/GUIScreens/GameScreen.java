@@ -199,7 +199,7 @@ public class GameScreen
 		flow.setStyle("-fx-background-color: DAE6F3;");
 
 		chatField = new TextField();
-		sendChatButton = new Button("     Send     ");
+		sendChatButton = new Button(" Send ");
 		sendChatButton.setOnAction(event ->
 		{
 			String message = chatField.getText();
@@ -211,7 +211,9 @@ public class GameScreen
 		});
 
 		GridPane tmpGrid = new GridPane();
-		tmpGrid.add(chatField, 1, 0);
+		tmpGrid.setPadding(new Insets(5, 5,0,5));
+		tmpGrid.add(chatField, 0, 0);
+		tmpGrid.add(new Label("    "), 1, 1);
 		tmpGrid.add(sendChatButton, 2, 0);
 
 		flow.setBottom(tmpGrid);
