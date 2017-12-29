@@ -229,7 +229,6 @@ public class GameScreen
 				} catch (IOException e) {
 					System.out.println("fail2");
 				}
-				sendToChat(line);
 				chatField.setText("");
 			}
 		});
