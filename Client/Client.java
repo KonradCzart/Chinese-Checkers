@@ -16,6 +16,8 @@ public class Client
 	private Socket socket;
 	private ServerListener serverLisener;
 	private ObjectOutputStream outStream;
+	// pppp
+
 	
 	public Client()
 	{

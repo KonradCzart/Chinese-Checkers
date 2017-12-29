@@ -13,10 +13,12 @@ public class ServerListener implements Runnable
 {
 	Socket currentSocket;
 	Object tmp;
+
 	
 	public ServerListener(Socket socket)
 	{
 		currentSocket = socket;
+
 	}
 	@Override
 	public void run() {
@@ -35,6 +37,7 @@ public class ServerListener implements Runnable
 					ChatMessage chat = (ChatMessage) tmp;
 					String line = chat.getDescription();			
 					System.out.println(line);
+
 				}
 				
 			}
