@@ -38,6 +38,7 @@ public class GameScreen
 	private Client myClient;
 	private ArrayList<Text> chatList;
 	private VBox chatBox;
+	private boolean isChatCreated;
 
 	GameScreen(String playerName, Stage stage, Client myClient)
 	{
@@ -53,10 +54,12 @@ public class GameScreen
 			System.out.println("fail!");
 		}
 
+		Platform.setImplicitExit(false);
 		chatList = new ArrayList<>();
-		
+		isChatCreated = false;
 		hbox = new HBox();
 		load();
+
 	}
 
 	private void load()
@@ -191,8 +194,11 @@ public class GameScreen
 
 	private void addTextToChat()
 	{
+		Platform.runLater(() -> {
 			VBox.setMargin(chatList.get(chatList.size()-1), new Insets(0, 0, 0, 8));
 			chatBox.getChildren().add(chatList.get(chatList.size()-1));
+		});
+
 	}
 
 	private BorderPane addBorderPane() {
@@ -203,6 +209,7 @@ public class GameScreen
 		flow.setStyle("-fx-background-color: DAE6F3;");
 
 		chatBox = new VBox();
+		isChatCreated = true;
 		chatField = new TextField();
 		sendChatButton = new Button("Send");
 		sendChatButton.setOnAction(event ->
@@ -216,7 +223,6 @@ public class GameScreen
 				{
 					myClient.sendMessage(newMessage);
 					chatField.setText("");
-					addTextToChat();
 					//flow.setTop(chatBox);
 				}
 				catch (IOException e)
@@ -232,6 +238,8 @@ public class GameScreen
 		title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 		chatBox.getChildren().add(title);
 		flow.setTop(chatBox);
+
+
 
 		chatList.add(new Text("TEST1"));
 		chatList.add(new Text("TEST2"));
@@ -275,7 +283,11 @@ public class GameScreen
 
 	public void sendToChat(String chat)
 	{
-		chatList.add(new Text(chat));
-		System.out.println(chat);
+		if(isChatCreated)
+		{
+			chatList.add(new Text(chat));
+			System.out.println(chat);
+			addTextToChat();
+		}
 	}
 }

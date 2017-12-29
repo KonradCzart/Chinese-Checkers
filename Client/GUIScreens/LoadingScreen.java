@@ -78,6 +78,7 @@ public class LoadingScreen
 		grid.add(userTextField, 1, 4);
 
 		btn = new Button("Sign in");
+		btn.setDefaultButton(true);
 		HBox hbBtn = new HBox(10);
 		hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
 		hbBtn.getChildren().add(btn);
