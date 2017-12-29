@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -15,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * Created by Kacper on 2017-12-29.
@@ -180,13 +182,14 @@ public class GameScreen
 	public GridPane addGridPane()
 	{
 		GridPane grid = new GridPane();
-		grid.setHgap(10);
-		grid.setVgap(10);
-		grid.setPadding(new Insets(0, 10, 0, 10));
+		//grid.setHgap(10);
+		//grid.setVgap(10);
+		//grid.setPadding(new Insets(0, 10, 0, 10));
 
-		Text chartTitle = new Text("Current Year");
-		chartTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-		grid.add(chartTitle, 0, 0);
+//		Text chartTitle = new Text("Current Year");
+//		chartTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+		createBoard(grid);
+//		grid.add(chartTitle, 0, 0);
 
 		return grid;
 	}
@@ -207,4 +210,30 @@ public class GameScreen
 		return flow;
 	}
 
+	private void createBoard(GridPane grid)
+	{
+		int rowNum = 10;
+		int colNum = 10;
+
+		//grid.getColumnConstraints().add(new ColumnConstraints(gridWidth));
+		//grid.getRowConstraints().add(new RowConstraints(gridHeight));
+
+		Random rand = new Random();
+		Color[] colors = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED};
+
+		int n = rand.nextInt(4)+1;
+
+		for (int row = 0; row < rowNum; row++) {
+			for (int col = 0; col < colNum; col++) {
+				n = rand.nextInt(4);
+				Rectangle rec = new Rectangle();
+				rec.setWidth(50);
+				rec.setHeight(50);
+				rec.setFill(colors[n]);
+				GridPane.setRowIndex(rec, row);
+				GridPane.setColumnIndex(rec, col);
+				grid.getChildren().addAll(rec);
+			}
+		}
+	}
 }
