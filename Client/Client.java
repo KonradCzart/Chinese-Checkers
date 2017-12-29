@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
 
+import Client.GUIScreens.GameScreen;
 import Message.*;
 import Server.ThreadedServer;
 
@@ -16,32 +17,30 @@ public class Client
 	private Socket socket;
 	private ServerListener serverLisener;
 	private ObjectOutputStream outStream;
+	// pppp
+
 	
 	public Client()
 	{
 
 	}
 	
-	public void connectServer()
+	public void connectServer() throws UnknownHostException, IOException
 	{
-		try {
+		
 			socket = new Socket("localhost", 8189);
-			serverLisener = new ServerListener(socket);
-			
-			Runnable r = serverLisener;
-			Thread t = new Thread(r);
-			t.start();
-			
+		
 			outStream = new ObjectOutputStream ( socket.getOutputStream());
-			
-			
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	}
+	
+	public void startServerLisener(GameScreen game)
+	{
+		serverLisener = new ServerListener(socket, game);
+		
+		Runnable r = serverLisener;
+		Thread t = new Thread(r);
+		t.start();
+		
 	}
 	
 	public void sendMessage(Message newMessage) throws IOException
