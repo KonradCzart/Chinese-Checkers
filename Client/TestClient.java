@@ -12,8 +12,12 @@ public class TestClient {
 	public static void main(String[] args) 
 	{
 		Client newClient = new Client();
-		newClient.connectServer();
-		
+		try {
+			newClient.connectServer();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		Scanner inn = new Scanner(System.in);
 		
 		while(true)
