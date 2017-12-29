@@ -2,7 +2,6 @@ package Client.GUIScreens;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -26,13 +25,22 @@ public class LoadingScreen
 	private TextField userTextField;
 	private Text connectingText;
 	private String playerName;
+	private String hostname;
+	private int port;
 
 	public LoadingScreen(Stage primaryStage)
+	{
+		this(primaryStage, "localhost", 8189);
+	}
+
+	public LoadingScreen(Stage primaryStage, String hostname, int port)
 	{
 		load();
 		stage = primaryStage;
 		scene = new Scene(grid, 850, 450);
 		stage.setScene(scene);
+		this.hostname = hostname;
+		this.port = port;
 	}
 
 	public void load()
@@ -85,13 +93,13 @@ public class LoadingScreen
 	{
 		btn.setOnAction(event ->
 		{
-			connectingText.setFill(Color.GREEN);
-			connectingText.setSmooth(true);
-			connectingText.setText("Connecting...");
 			String name = userTextField.getText();
 
 			if (name.matches("[\\w]+"))
 			{
+				connectingText.setFill(Color.GREEN);
+				connectingText.setSmooth(true);
+				connectingText.setText("Connecting...");
 				playerName = name;
 				new GameScreen(playerName, stage);
 			}

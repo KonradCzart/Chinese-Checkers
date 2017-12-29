@@ -10,13 +10,11 @@ import Game.BadPlayerException;
 import Game.ColorPlayer;
 import Game.Game;
 import Game.IncorrectMoveException;
-import Server.ThreadedServer;
-import junit.framework.Assert;
 
 public class GameTest {
 
 	
-	Game myGame;
+	private Game myGame;
 	
 	@Before
 	public void setUp()
@@ -35,15 +33,15 @@ public class GameTest {
 	}
 	@Test
 	public void testMoveValidate() {
-		Assert.assertTrue(myGame.moveValidate(4, 10, 5, 9));
-		Assert.assertTrue(myGame.moveValidate(4, 10, 5, 10));
+		assertTrue(myGame.moveValidate(4, 10, 5, 9));
+		assertTrue(myGame.moveValidate(4, 10, 5, 10));
 		
-		Assert.assertTrue(myGame.moveValidate(7, 6, 8, 6));
-		Assert.assertTrue(myGame.moveValidate(7, 6, 7, 7));
+		assertTrue(myGame.moveValidate(7, 6, 8, 6));
+		assertTrue(myGame.moveValidate(7, 6, 7, 7));
 		
-		Assert.assertFalse(myGame.moveValidate(7, 6, 8, 7));
-		Assert.assertFalse(myGame.moveValidate(14, 6, 13, 5));
-		Assert.assertFalse(myGame.moveValidate(8, 14, 7, 13));
+		assertFalse(myGame.moveValidate(7, 6, 8, 7));
+		assertFalse(myGame.moveValidate(14, 6, 13, 5));
+		assertFalse(myGame.moveValidate(8, 14, 7, 13));
 	}
 	
 	@Test
@@ -54,9 +52,9 @@ public class GameTest {
 			myGame.move(ColorPlayer.PLAYER_ONE, 4, 10, 5, 10);
 			myGame.move(ColorPlayer.PLAYER_ONE, 4, 11, 6, 9);
 		} catch (BadPlayerException e) {
-			Assert.fail();
+			fail();
 		} catch (IncorrectMoveException e) {
-			Assert.fail();
+			fail();
 		}
 	}
 	@Test
@@ -64,7 +62,7 @@ public class GameTest {
 	{
 		try {
 			myGame.move(ColorPlayer.PLAYER_TWO, 14, 5, 13, 5);
-			Assert.fail();
+			fail();
 		} catch (BadPlayerException e) {
 		} catch (IncorrectMoveException e) {
 		}
@@ -77,9 +75,9 @@ public class GameTest {
 			myGame.endMove(ColorPlayer.PLAYER_THREE);
 			myGame.move(ColorPlayer.PLAYER_ONE, 4, 13, 6, 13);
 		} catch (BadPlayerException e) {
-			Assert.fail();
+			fail();
 		} catch (IncorrectMoveException e) {
-			Assert.fail();
+			fail();
 		}
 
 	}

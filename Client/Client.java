@@ -13,7 +13,6 @@ import Server.ThreadedServer;
 
 public class Client
 {
-
 	private Socket socket;
 	private ServerListener serverLisener;
 	private ObjectOutputStream outStream;

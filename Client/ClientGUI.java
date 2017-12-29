@@ -16,11 +16,10 @@ public class ClientGUI extends Application
 		primaryStage.setMinHeight(450);
 		primaryStage.setMinWidth(850);
 
-
 		new LoadingScreen(primaryStage);
 
 		primaryStage.show();
-}
+	}
 
 	public static void main(String args[])
 	{
