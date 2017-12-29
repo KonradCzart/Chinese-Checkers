@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.*;
 
 import Client.*;
+import Game.*;
 import Message.*;
 
 /** 
@@ -14,13 +15,17 @@ import Message.*;
 
 public class ThreadedServer implements Runnable {
 	private ArrayList<ClientHandler> client;
+	private ArrayList<Game> tabGame;
 	private static ThreadedServer instance;
 	private boolean serverRun;
+	private static int countIdGame;
 	
 	
 	private ThreadedServer()
 	{
 		client = new ArrayList<ClientHandler>();
+		tabGame = new ArrayList<Game>();
+		countIdGame = 1;
 	}
 	
 	/**
@@ -92,6 +97,9 @@ public class ThreadedServer implements Runnable {
 		private String name;
 		private ObjectOutputStream outStream;
 		private ObjectInputStream inStream;
+		private int gameID;
+		private ColorPlayer myPlayer;
+		private Game myGame;
 		
 		
 		public ClientHandler(Socket coming, String name) 
@@ -106,12 +114,27 @@ public class ThreadedServer implements Runnable {
 				e.printStackTrace();
 			}
 			
+			gameID = 0;
+			myPlayer = ColorPlayer.PLAYER_EMPTY;
+			myGame = null;
+			
+		}
+		
+		public ColorPlayer getMyplayer()
+		{
+			return myPlayer;
+		}
+		
+		public int getGameID()
+		{
+			return gameID;
 		}
 		
 		public ObjectOutputStream getObjectOutputStream()
 		{
 			return outStream;
 		}
+	
 		public Socket getSocket()
 		{
 			return coming;
@@ -126,6 +149,38 @@ public class ThreadedServer implements Runnable {
 		public String toString()
 		{
 			return name;
+		}
+		
+		private void createGame()
+		{
+			Game newGame = new Game(countIdGame);
+			this.gameID = countIdGame;
+			tabGame.add(newGame);
+			this.myGame = newGame;
+			this.myPlayer = newGame.addPalyer();
+			
+			countIdGame++;
+		}
+		
+		private void joinGame(int idGame)
+		{
+			Game newGame = null;
+			
+			for (Game tmpGame : tabGame) 
+			{
+				int currentIdGame = tmpGame.getID();
+				
+				if(currentIdGame == idGame)
+				{
+					newGame = tmpGame;
+					break;
+				}
+				
+			}
+			
+			this.myPlayer = newGame.addPalyer();
+			this.myGame = newGame;
+			this.gameID = idGame;
 		}
 		
 		@Override
@@ -148,11 +203,14 @@ public class ThreadedServer implements Runnable {
 						
 						for (ClientHandler tmp : client) 
 						{
-							String line2 = name + " >>> " + line;
-							ObjectOutputStream outStream;
-							outStream = tmp.getObjectOutputStream();
-							ChatMessage newMessage = new ChatMessage(line2);
-							outStream.writeObject(newMessage);
+							if(tmp.getGameID() == this.gameID)
+							{
+								String line2 = name + " >>> " + line;
+								ObjectOutputStream outStream;
+								outStream = tmp.getObjectOutputStream();
+								ChatMessage newMessage = new ChatMessage(line2);
+								outStream.writeObject(newMessage);
+							}
 						}
 					}
 					else if(objectMessage instanceof NewNameMessage)
@@ -177,6 +235,29 @@ public class ThreadedServer implements Runnable {
 							name = newName;
 							ChatMessage newMessage = new ChatMessage("Your new name is" + name);
 							outStream.writeObject(newMessage);
+						}
+					}
+					else if(objectMessage instanceof JoinGameMessage)
+					{
+						JoinGameMessage gameMessage = (JoinGameMessage) objectMessage;
+						
+						if(gameMessage.getNewGame())
+						{
+							this.createGame();
+						}
+						else
+						{
+							int tmpID;
+							
+							for (Game tmp : tabGame) 
+							{
+								tmpID = tmp.getID();
+								
+								if(gameMessage.getIdGame() == tmpID)
+									this.joinGame(tmpID);
+							}
+							
+							// dodac wysylanie bledu jesli nie ma gry o takim id
 						}
 					}
 
