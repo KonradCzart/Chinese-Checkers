@@ -282,6 +282,18 @@ public class ThreadedServer implements Runnable {
 								String line = "Success to join the game. Your game code: " + gameID;
 								SuccessMessage newMessage = new SuccessMessage(2567, line);
 								outStream.writeObject(newMessage);
+								
+								for (ClientHandler tmp : client)
+								{
+									if(tmp.getGameID() == this.gameID)
+									{
+										String line2 = name + ": Join to game :" + gameID;
+										ObjectOutputStream outS;
+										outS = tmp.getObjectOutputStream();
+										ChatMessage newMessage2 = new ChatMessage(line2);
+										outS.writeObject(newMessage2);
+									}
+								}
 							}
 							else
 							{
