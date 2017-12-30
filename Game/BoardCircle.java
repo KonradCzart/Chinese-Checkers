@@ -10,6 +10,9 @@ public class BoardCircle extends Circle
 	private ColorPlayer colorPlayer;
 	private FieldStatus fieldStatus;
 
+	private int x;
+
+	private int y;
 	public BoardCircle(FieldStatus fieldStatus)
 	{
 		this.fieldStatus = fieldStatus;
@@ -31,5 +34,21 @@ public class BoardCircle extends Circle
 
 	public void setFieldStatus(FieldStatus fieldStatus) {
 		this.fieldStatus = fieldStatus;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
 	}
 }

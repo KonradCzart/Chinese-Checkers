@@ -1,7 +1,7 @@
 package Client.GUIScreens;
 
 import Game.BoardCircle;
-import Game.Field;
+import Game.ColorPlayer;
 import Game.FieldStatus;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -20,7 +19,6 @@ import javafx.util.Pair;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.Random;
 
 import Client.Client;
 import Message.*;
@@ -37,19 +35,21 @@ public class GameScreen
 	private HBox hbox;
 	private TextField chatField;
 	private Button sendChatButton;
-	private Button joinGameButton;
+	private Button startGameButton;
 	private Button createGameButton;
 	private Client myClient;
 	private VBox chatBox;
 	private ScrollPane scrollPane;
 	private BoardCircle[][] tabField;
+	private BoardCircle clickedBoardCircle;
 	private boolean isChatCreated;
 
 	GameScreen(String playerName, Stage stage, Client myClient)
 	{
 		this.stage = stage;
 		this.playerName = playerName;
-		//create client and send message with new name
+
+
 		this.myClient = myClient;
 		this.myClient.startServerLisener(this);
 		NewNameMessage newMessage = new NewNameMessage(playerName);
@@ -75,11 +75,32 @@ public class GameScreen
 		MenuBar menuBar = new MenuBar();
 		Menu menuFile = new Menu("File");
 		Menu menuInfo = new Menu("Info");
+
+		MenuItem createGame = new MenuItem(("Create the game"));
+		createGame.setOnAction(event ->
+		{
+			JoinGameMessage newJoinMessage = new JoinGameMessage(0, true);
+			try {
+				myClient.sendMessage(newJoinMessage);
+			} catch (IOException e) {
+				errorDialog("no send message!");
+			}
+		});
+
+		MenuItem joinGame = new MenuItem(("Join the game"));
+		joinGame.setOnAction(event ->
+		{
+			gameIdDialog();
+
+		});
+
 		MenuItem changeServer = new MenuItem(("Change Server"));
 		changeServer.setOnAction(t -> changeServer());
+
 		MenuItem exit = new MenuItem("Exit");
 		exit.setOnAction(t -> System.exit(0));
-		menuFile.getItems().addAll(changeServer, new SeparatorMenuItem(), exit);
+
+		menuFile.getItems().addAll(joinGame, createGame, changeServer, new SeparatorMenuItem(), exit);
 		menuBar.getMenus().addAll(menuFile, menuInfo);
 
 		hbox.getChildren().add(menuBar);
@@ -219,31 +240,31 @@ public class GameScreen
 	{
 		HBox stack = new HBox();
 
-		joinGameButton = new Button("Join game");
+		startGameButton = new Button("Start");
 		createGameButton = new Button("Create game");
 
-		joinGameButton.setPrefSize(100, 20);
+		startGameButton.setPrefSize(100, 20);
 		createGameButton.setPrefSize(100, 20);
 
-		joinGameButton.setOnAction(event ->
+		startGameButton.setOnAction(event ->
 		{
 			gameIdDialog();
 
 		});
-		createGameButton.setOnAction(event ->
-		{
-			JoinGameMessage newJoinMessage = new JoinGameMessage(0, true);
-			try {
-				myClient.sendMessage(newJoinMessage);
-			} catch (IOException e) {
-				errorDialog("no send message!");
-			}
-		});
+//		createGameButton.setOnAction(event ->
+//		{
+//			JoinGameMessage newJoinMessage = new JoinGameMessage(0, true);
+//			try {
+//				myClient.sendMessage(newJoinMessage);
+//			} catch (IOException e) {
+//				errorDialog("no send message!");
+//			}
+//		});
 
 		stack.setSpacing(8);
-		stack.getChildren().addAll(joinGameButton, createGameButton);
+		stack.getChildren().addAll(startGameButton, createGameButton);
 		stack.setAlignment(Pos.CENTER_RIGHT);     // Right-justify nodes in stack
-		StackPane.setMargin(joinGameButton, new Insets(0, 10, 0, 0)); // Center "?"
+		StackPane.setMargin(startGameButton, new Insets(0, 10, 0, 0)); // Center "?"
 
 		hb.getChildren().add(stack);            // Add to HBox from Example 1-2
 		HBox.setHgrow(stack, Priority.ALWAYS);    // Give stack any extra space
@@ -316,8 +337,6 @@ public class GameScreen
 		gridPane.setRotate(45);
 
 		paintBoard(gridPane);
-		//grid.setHgap(10);
-		//grid.setVgap(10);
 		//gridPane.setPadding(new Insets(10, 10, 10, 10));
 
 //		Text chartTitle = new Text("Current Year");
@@ -347,6 +366,7 @@ public class GameScreen
 					GridPane.setColumnIndex(c, j);
 					GridPane.setMargin(c, new Insets(7, 7, 7, 7));
 					grid.getChildren().addAll(c);
+					c.setOnMouseClicked(event -> onBoardCircleClick(c));
 				}
 				else if(currentStatus == FieldStatus.CLOSED)
 				{
@@ -357,26 +377,41 @@ public class GameScreen
 					//System.out.printf("8");
 				}
 			}
-			//i++;
-			//System.out.printf("\n");
 		}
-//		Random rand = new Random();
-//		Color[] colors = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED};
-//
-//		for (int row = 0; row < 19; row++)
-//		{
-//			for (int col = 0; col < 19; col++)
-//			{
-//				int n = rand.nextInt(4);
-//				Circle c = new Circle();
-//				c.setRadius(15);
-//				c.setFill(colors[n]);
-//				GridPane.setRowIndex(c, row);
-//				GridPane.setColumnIndex(c, col);
-//				grid.getChildren().addAll(c);
-//			}
-//		}
+
+
+		addPawn(ColorPlayer.PLAYER_ONE, 8, 11);
+		addPawn(ColorPlayer.PLAYER_THREE, 7, 14);
+		addPawn(ColorPlayer.PLAYER_FOUR, 9, 10);
+
+
+
+
+
 	}
+
+
+	private void onBoardCircleClick(BoardCircle circle)
+	{
+		if(clickedBoardCircle == null)
+		{
+			clickedBoardCircle = circle;
+			clickedBoardCircle.setFill(Color.valueOf("#333333"));
+		}
+		else if(clickedBoardCircle == circle)
+		{
+			clickedBoardCircle.setFill(Color.valueOf("#FFFFFF"));
+			clickedBoardCircle = null;
+		}
+		else
+		{
+			// Czekaj na potwierdznie ruchu i wtedy rusz ten pionek tam..
+//			move(clickedBoardCircle, circle);
+			clickedBoardCircle.setFill(Color.valueOf("#FFFFFF"));
+			clickedBoardCircle = null;
+		}
+	}
+
 
 	private void createBoard()
 	{
@@ -492,5 +527,56 @@ public class GameScreen
 	{
 		if(isChatCreated)
 			addTextToChat(new Text(chat));
+	}
+
+	public void addPawn(ColorPlayer colorPlayer, int x, int y)
+	{
+		BoardCircle k = tabField[x][y];
+		k.setColorPlayer(colorPlayer);
+		k.setX(x);
+		k.setY(y);
+
+		switch (colorPlayer)
+		{
+			case PLAYER_ONE:
+			{
+				k.setFill(Color.valueOf("#DFFF00"));
+				break;
+			}
+			case PLAYER_TWO:
+			{
+				k.setFill(Color.valueOf("#FF00FF"));
+				break;
+			}
+			case PLAYER_THREE:
+			{
+				k.setFill(Color.valueOf("#00FFFF"));
+				break;
+			}
+			case PLAYER_FOUR:
+			{
+				k.setFill(Color.valueOf("#AFAFAF"));
+				break;
+			}
+			case PLAYER_FIVE:
+			{
+				k.setFill(Color.valueOf("#CAFAFA"));
+				break;
+			}
+			case PLAYER_SIX:
+			{
+				k.setFill(Color.valueOf("#CCCCCC"));
+				break;
+			}
+			case PLAYER_EMPTY:
+			{
+				k.setFill(Color.valueOf("#FFFFFF"));
+				break;
+			}
+			default:
+				break;
+
+		}
+
 	}
 }
