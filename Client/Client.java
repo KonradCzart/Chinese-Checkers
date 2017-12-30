@@ -54,4 +54,17 @@ public class Client
 	{
 		outStream.writeObject(newMessage);
 	}
+
+	public void closeConnection()
+	{
+		try
+		{
+			outStream.close();
+			socket.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }

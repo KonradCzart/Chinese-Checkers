@@ -49,6 +49,7 @@ public class LoadingScreen
 
 		stage.setOnCloseRequest(e ->
 		{
+			myClient.closeConnection();
 			Platform.exit();
 			System.exit(0);
 		});
