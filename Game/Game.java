@@ -26,6 +26,11 @@ public class Game
 		start = false;
 	}
 	
+	public ArrayList<Pawn> getArrayPawn()
+	{
+		return tabPawn;
+	}
+	
 	public void endMove(ColorPlayer movePlayer) throws BadPlayerException
 	{
 		ColorPlayer queuePlayer = ColorPlayer.values()[currentPlayer];
