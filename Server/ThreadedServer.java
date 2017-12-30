@@ -283,6 +283,46 @@ public class ThreadedServer implements Runnable {
 							}
 						}
 					}
+					else if(objectMessage instanceof MoveMessage)
+					{
+						MoveMessage newMove = (MoveMessage) objectMessage;
+						if(newMove.getEndTurn())
+						{
+							try 
+							{
+								myGame.endMove(myPlayer);
+							} catch (BadPlayerException e) 
+							{
+								// TODO Auto-generated catch block for later
+							}
+						}
+						else
+						{
+							int oldX = newMove.getOldX();
+							int oldY = newMove.getOldY();
+							int newX = newMove.getNewX();
+							int newY = newMove.getNewY();
+							
+							try {
+								myGame.move(myPlayer, oldX, oldY, newX, newY);
+								MoveMessage okMove = new MoveMessage(oldX, oldY, newX, newY);
+								
+								for (ClientHandler tmp : client)
+								{
+									if(tmp.getGameID() == this.gameID)
+									{
+										outStream.writeObject(okMove);
+									}
+								}
+							} catch (BadPlayerException e) {
+								
+							} catch (IncorrectMoveException e) {
+								FailMessage newFail = new FailMessage(1235,"Incorrect move!");
+								outStream.writeObject(newFail);
+							}
+						}
+						
+					}
 
 
 				}
