@@ -213,7 +213,7 @@ public class ThreadedServer implements Runnable {
 						{
 							if(tmp.getGameID() == this.gameID)
 							{
-								String line2 = name + " >>> " + line;
+								String line2 = name + ": " + line;
 								ObjectOutputStream outStream;
 								outStream = tmp.getObjectOutputStream();
 								ChatMessage newMessage = new ChatMessage(line2);
@@ -241,7 +241,13 @@ public class ThreadedServer implements Runnable {
 						if(!isName)
 						{
 							name = newName;
-							ChatMessage newMessage = new ChatMessage("Your new name is" + name);
+							String line = "Your new name is " + name;
+							SuccessMessage newMessage = new SuccessMessage(3689, line);
+							outStream.writeObject(newMessage);
+						}
+						else 
+						{
+							FailMessage newMessage = new FailMessage(3689, "Your name is reserve");
 							outStream.writeObject(newMessage);
 						}
 					}
@@ -267,7 +273,8 @@ public class ThreadedServer implements Runnable {
 							
 							if(joinStatus)
 							{
-								SuccessMessage newMessage = new SuccessMessage(2567, "Success to join the game");
+								String line = "Success to join the game. Your game code: " + gameID;
+								SuccessMessage newMessage = new SuccessMessage(2567, line);
 								outStream.writeObject(newMessage);
 							}
 							else
