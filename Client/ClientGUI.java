@@ -2,6 +2,7 @@ package Client;
 
 import Client.GUIScreens.LoadingScreen;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 /**

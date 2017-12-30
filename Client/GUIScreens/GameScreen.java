@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
 
@@ -36,8 +35,8 @@ public class GameScreen
 	private TextField chatField;
 	private Button sendChatButton;
 	private Client myClient;
-	private ArrayList<Text> chatList;
 	private VBox chatBox;
+	private ScrollPane scrollPane;
 	private boolean isChatCreated;
 
 	GameScreen(String playerName, Stage stage, Client myClient)
@@ -55,7 +54,6 @@ public class GameScreen
 		}
 
 		Platform.setImplicitExit(false);
-		chatList = new ArrayList<>();
 		isChatCreated = false;
 		hbox = new HBox();
 		load();
@@ -69,12 +67,10 @@ public class GameScreen
 		MenuBar menuBar = new MenuBar();
 		Menu menuFile = new Menu("File");
 		Menu menuInfo = new Menu("Info");
-
 		MenuItem changeServer = new MenuItem(("Change Server"));
 		changeServer.setOnAction(t -> changeServer());
 		MenuItem exit = new MenuItem("Exit");
 		exit.setOnAction(t -> System.exit(0));
-
 		menuFile.getItems().addAll(changeServer, new SeparatorMenuItem(), exit);
 		menuBar.getMenus().addAll(menuFile, menuInfo);
 
@@ -85,10 +81,10 @@ public class GameScreen
 //		border.setLeft(addVBox());
 
 		addStackPane(hbox);
-		border.setCenter(addGridPane());
+		border.setCenter(addBoardPane());
 		border.setRight(addBorderPane());
 
-		scene = new Scene(border, 1024, 768);
+		scene = new Scene(border, 924, 668);
 		stage.setScene(scene);
 		stage.setMinWidth(1024);
 		stage.setMinHeight(768);
@@ -114,11 +110,11 @@ public class GameScreen
 	{
 		// Create the custom dialog.
 		Dialog<Pair<String, String>> dialog = new Dialog<>();
-		dialog.setTitle("Change server");
+		dialog.setTitle("Connect to server");
 		dialog.setHeaderText("");
 
 		// Set the button types.
-		ButtonType loginButtonType = new ButtonType("Login", ButtonBar.ButtonData.OK_DONE);
+		ButtonType loginButtonType = new ButtonType("Reconnect", ButtonBar.ButtonData.OK_DONE);
 		dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
 
 		GridPane grid = new GridPane();
@@ -177,28 +173,12 @@ public class GameScreen
 		HBox.setHgrow(stack, Priority.ALWAYS);    // Give stack any extra space
 	}
 
-	public GridPane addGridPane()
-	{
-		GridPane grid = new GridPane();
-		//grid.setHgap(10);
-		//grid.setVgap(10);
-		//grid.setPadding(new Insets(0, 10, 0, 10));
-
-//		Text chartTitle = new Text("Current Year");
-//		chartTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-		createBoard(grid);
-//		grid.add(chartTitle, 0, 0);
-
-		return grid;
-	}
-
-	private void addTextToChat()
+	private void addTextToChat(Text chatMessage)
 	{
 		Platform.runLater(() -> {
-			VBox.setMargin(chatList.get(chatList.size()-1), new Insets(0, 0, 0, 8));
-			chatBox.getChildren().add(chatList.get(chatList.size()-1));
+			VBox.setMargin(chatMessage, new Insets(0, 0, 0, 8));
+			chatBox.getChildren().add(chatMessage);
 		});
-
 	}
 
 	private BorderPane addBorderPane() {
@@ -210,6 +190,15 @@ public class GameScreen
 
 		chatBox = new VBox();
 		isChatCreated = true;
+		scrollPane = new ScrollPane();
+		scrollPane.setContent(chatBox);
+		scrollPane.setStyle(" -fx-background: #F0F5FA; -fx-border-color: #F0F5FA;");
+		scrollPane.setMaxHeight(620);
+		scrollPane.setMaxWidth(240);
+		scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		scrollPane.vvalueProperty().bind(chatBox.heightProperty());
+
 		chatField = new TextField();
 		sendChatButton = new Button("Send");
 		sendChatButton.setOnAction(event ->
@@ -223,7 +212,6 @@ public class GameScreen
 				{
 					myClient.sendMessage(newMessage);
 					chatField.setText("");
-					//flow.setTop(chatBox);
 				}
 				catch (IOException e)
 				{
@@ -237,23 +225,31 @@ public class GameScreen
 		Text title = new Text("CHAT");
 		title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 		chatBox.getChildren().add(title);
-		flow.setTop(chatBox);
+		flow.setTop(scrollPane);
 
+		HBox tmpHBox= new HBox();
+		tmpHBox.setSpacing(15);
+		tmpHBox.setAlignment(Pos.CENTER);
+		tmpHBox.getChildren().addAll(chatField, sendChatButton);
 
-
-		chatList.add(new Text("TEST1"));
-		chatList.add(new Text("TEST2"));
-		chatList.add(new Text("TEST3"));
-
-		GridPane tmpGrid = new GridPane();
-		tmpGrid.setPadding(new Insets(5, 5,0,5));
-		tmpGrid.add(chatField, 0, 0);
-		tmpGrid.add(new Label(" "), 1, 1);
-		tmpGrid.add(sendChatButton, 2, 0);
-
-		flow.setBottom(tmpGrid);
+		flow.setBottom(tmpHBox);
 
 		return flow;
+	}
+
+	public GridPane addBoardPane()
+	{
+		GridPane gridPane = new GridPane();
+		//grid.setHgap(10);
+		//grid.setVgap(10);
+		//grid.setPadding(new Insets(0, 10, 0, 10));
+
+//		Text chartTitle = new Text("Current Year");
+//		chartTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+		createBoard(gridPane);
+//		grid.add(chartTitle, 0, 0);
+
+		return gridPane;
 	}
 
 	private void createBoard(GridPane grid)
@@ -284,10 +280,6 @@ public class GameScreen
 	public void sendToChat(String chat)
 	{
 		if(isChatCreated)
-		{
-			chatList.add(new Text(chat));
-			System.out.println(chat);
-			addTextToChat();
-		}
+			addTextToChat(new Text(chat));
 	}
 }

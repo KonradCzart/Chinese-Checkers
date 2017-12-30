@@ -3,6 +3,7 @@ package Client.GUIScreens;
 import java.io.IOException;
 
 import Client.Client;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -45,6 +46,14 @@ public class LoadingScreen
 		stage.setScene(scene);
 		this.hostname = hostname;
 		this.port = port;
+
+		stage.setOnCloseRequest(e ->
+		{
+			Platform.exit();
+			// TODO release socket!
+			System.exit(0);
+		});
+
 		myClient = new Client(hostname,port);
 	}
 
