@@ -6,6 +6,7 @@ import java.net.*;
 import java.util.Scanner;
 
 import Client.GUIScreens.GameScreen;
+import Game.ColorPlayer;
 import Message.*;
 
 public class ServerListener implements Runnable
@@ -57,6 +58,18 @@ public class ServerListener implements Runnable
 				{
 					AddPawnMessage addPawn = (AddPawnMessage) tmp;
 					game.addPawn(addPawn.getPlayer(), addPawn.getMyX(), addPawn.getMyY());
+				}
+				else if(tmp instanceof MoveMessage)
+				{
+					MoveMessage movePawn = (MoveMessage) tmp;
+					int oldX, oldY, newX, newY;
+					oldX = movePawn.getOldX();
+					oldY = movePawn.getOldY();
+					newX = movePawn.getNewX();
+					newY = movePawn.getNewY();
+					ColorPlayer movePlayer = movePawn.getMovePlayer();
+					
+					game.movePawn(oldX, oldY, newX, newY, movePlayer);
 				}
 				
 			}

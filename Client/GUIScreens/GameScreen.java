@@ -368,6 +368,8 @@ public class GameScreen
 				{
 					BoardCircle c = tabField[i][j];
 					c.setRadius(13);
+					c.setX(i);
+					c.setY(j);
 					c.setFill(Color.valueOf("#FFFFFF"));
 					GridPane.setRowIndex(c, i);
 					GridPane.setColumnIndex(c, j);
@@ -409,9 +411,71 @@ public class GameScreen
 //			move(clickedBoardCircle, circle);
 
 			// jesli metoda move pozwoli to rusz
-			circle.setFill(lastClickedColor);
-			clickedBoardCircle.setFill(Color.valueOf("#FFFFFF"));
+			//circle.setFill(lastClickedColor);
+			clickedBoardCircle.setFill(lastClickedColor);
+			int oldX, oldY, newX, newY;
+			oldX = clickedBoardCircle.getX();
+			oldY = clickedBoardCircle.getY();
+			newX = circle.getX();
+			newY = circle.getY();
+			
+			//this.movePawn(oldX, oldY, newX, newY);
+			
+			MoveMessage newMessage = new MoveMessage(oldX, oldY, newX, newY);
+			try {
+				myClient.sendMessage(newMessage);
+			} catch (IOException e) {
+				
+			}
+			
 			clickedBoardCircle = null;
+		}
+	}
+	
+	public void movePawn(int oldX, int oldY, int newX, int newY, ColorPlayer movePlayer)
+	{
+		tabField[oldX][oldY].setFill(Color.valueOf("#FFFFFF"));
+
+		switch (movePlayer)
+		{
+			case PLAYER_ONE:
+			{
+				tabField[newX][newY].setFill(Color.valueOf("#DFFF00"));
+				break;
+			}
+			case PLAYER_TWO:
+			{
+				tabField[newX][newY].setFill(Color.valueOf("#FF00FF"));
+				break;
+			}
+			case PLAYER_THREE:
+			{
+				tabField[newX][newY].setFill(Color.valueOf("#00FFFF"));
+				break;
+			}
+			case PLAYER_FOUR:
+			{
+				tabField[newX][newY].setFill(Color.valueOf("#AFAFAF"));
+				break;
+			}
+			case PLAYER_FIVE:
+			{
+				tabField[newX][newY].setFill(Color.valueOf("#CAFAFA"));
+				break;
+			}
+			case PLAYER_SIX:
+			{
+				tabField[newX][newY].setFill(Color.valueOf("#CCCCCC"));
+				break;
+			}
+			case PLAYER_EMPTY:
+			{
+				tabField[newX][newY].setFill(Color.valueOf("#FFFFFF"));
+				break;
+			}
+			default:
+				break;
+
 		}
 	}
 

@@ -15,7 +15,8 @@ public class MoveMessage implements Message
 	private int newX;
 	private int newY;
 	private Boolean endTurn;
-	private ColorPlayer nextTurnPlayer;
+	private String nextTurnPlayer;
+	private ColorPlayer movePlayer;
 	
 	
 
@@ -26,6 +27,16 @@ public class MoveMessage implements Message
 		this.newX = newX;
 		this.newY = newY;
 		endTurn = false;
+	}
+	
+	public MoveMessage(int oldX, int oldY, int newX, int newY, ColorPlayer movePlayer)
+	{
+		this.oldX = oldX;
+		this.oldY = oldY;
+		this.newX = newX;
+		this.newY = newY;
+		endTurn = false;
+		this.movePlayer = movePlayer;
 	}
 	
 	public MoveMessage(Boolean endTurn)
@@ -68,12 +79,22 @@ public class MoveMessage implements Message
 		return endTurn;
 	}	
 	
-	public ColorPlayer getNextTurnPlayer() {
+	public String getNextTurnPlayer() {
 		return nextTurnPlayer;
 	}
 
-	public void setNextTurnPlayer(ColorPlayer nextTurnPlayer) {
+	public void setNextTurnPlayer(String nextTurnPlayer) {
 		this.nextTurnPlayer = nextTurnPlayer;
+	}
+	
+	public void setMovePlayer(ColorPlayer movePlayer)
+	{
+		this.movePlayer = movePlayer;
+	}
+	
+	public ColorPlayer getMovePlayer()
+	{
+		return movePlayer;
 	}
 
 }
