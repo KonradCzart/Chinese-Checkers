@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -50,8 +51,6 @@ public class GameScreen
 	{
 		this.stage = stage;
 		this.playerName = playerName;
-
-
 		this.myClient = myClient;
 		this.myClient.startServerLisener(this);
 		NewNameMessage newMessage = new NewNameMessage(playerName);
@@ -93,7 +92,6 @@ public class GameScreen
 		joinGame.setOnAction(event ->
 		{
 			gameIdDialog();
-
 		});
 
 		MenuItem changeServer = new MenuItem(("Change Server"));
@@ -213,9 +211,13 @@ public class GameScreen
 
 		Optional<Pair<String, String>> result = dialog.showAndWait();
 
-		result.ifPresent(usernamePassword -> new LoadingScreen(stage));
+		result.ifPresent(connectionData ->
+		{
+			//TODO jakis try catch i errorMess
+			int portData = Integer.parseInt(connectionData.getValue());
+			new LoadingScreen(stage, connectionData.getKey(), portData);
+		});
 	}
-
 
 	public void gameIdDialog()
 	{
@@ -238,6 +240,7 @@ public class GameScreen
 			}
 		});
 	}
+
 	private void addStackPane(HBox hb)
 	{
 		HBox stack = new HBox();
@@ -299,24 +302,15 @@ public class GameScreen
 		scrollPane.vvalueProperty().bind(chatBox.heightProperty());
 
 		chatField = new TextField();
+		chatField.setOnKeyPressed(event ->
+		{
+			if(event.getCode() == KeyCode.ENTER)
+				sendMessageToChat();
+		});
 		sendChatButton = new Button("Send");
 		sendChatButton.setOnAction(event ->
 		{
-			String message = chatField.getText();
-			if(!message.equals(""))
-			{
-				String line = chatField.getText();
-				ChatMessage newMessage = new ChatMessage(line);
-				try
-				{
-					myClient.sendMessage(newMessage);
-					chatField.setText("");
-				}
-				catch (IOException e)
-				{
-					System.out.println("Send message fail");
-				}
-			}
+			sendMessageToChat();
 		});
 
 		chatBox.setPadding(new Insets(10));
@@ -331,10 +325,28 @@ public class GameScreen
 		tmpHBox.setAlignment(Pos.CENTER);
 		tmpHBox.getChildren().addAll(chatField, sendChatButton);
 
-
 		flow.setBottom(tmpHBox);
 
 		return flow;
+	}
+
+	private void sendMessageToChat()
+	{
+		String message = chatField.getText();
+		if(!message.equals(""))
+		{
+			String line = chatField.getText();
+			ChatMessage newMessage = new ChatMessage(line);
+			try
+			{
+				myClient.sendMessage(newMessage);
+				chatField.setText("");
+			}
+			catch (IOException e)
+			{
+				System.out.println("Send message fail");
+			}
+		}
 	}
 
 	public GridPane addBoardPane()
