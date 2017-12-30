@@ -34,6 +34,8 @@ public class GameScreen
 	private HBox hbox;
 	private TextField chatField;
 	private Button sendChatButton;
+	private Button joinGameButton;
+	private Button createGameButton;
 	private Client myClient;
 	private VBox chatBox;
 	private ScrollPane scrollPane;
@@ -91,19 +93,41 @@ public class GameScreen
 		stage.show();
 	}
 
-	private HBox addHBox() {
+	private HBox addHBox()
+	{
 		hbox.setPadding(new Insets(15, 12, 15, 12));
 		hbox.setSpacing(10);
 		hbox.setStyle("-fx-background-color: #336699;");
 
-//		Button buttonCurrent = new Button("Current");
-//		buttonCurrent.setPrefSize(100, 20);
-//
-//		Button buttonProjected = new Button("Projected");
-//		buttonProjected.setPrefSize(100, 20);
-//		hbox.getChildren().addAll(buttonCurrent, buttonProjected);
+		joinGameButton = new Button("Join game");
+		createGameButton = new Button("Create game");
+
+		joinGameButton.setPrefSize(100, 20);
+		createGameButton.setPrefSize(100, 20);
+
+		joinGameButton.setOnAction(event ->
+		{
+			errorDialog("Jeszcze nie okodowano");
+		});
+		createGameButton.setOnAction(event ->
+		{
+			errorDialog("Przycisk createGame");
+		});
+
+
+		hbox.getChildren().addAll(joinGameButton, createGameButton);
 
 		return hbox;
+	}
+
+	private void errorDialog(String errorMessage)
+	{
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle("Error");
+		alert.setHeaderText("");
+		alert.setContentText(errorMessage);
+
+		alert.showAndWait();
 	}
 
 	private void changeServer()
@@ -159,7 +183,8 @@ public class GameScreen
 		result.ifPresent(usernamePassword -> new LoadingScreen(stage));
 	}
 
-	public void addStackPane(HBox hb) {
+	private void addStackPane(HBox hb)
+	{
 		StackPane stack = new StackPane();
 		Text helpText = new Text("You are connected!");
 		helpText.setFill(Color.GREEN);
@@ -173,15 +198,8 @@ public class GameScreen
 		HBox.setHgrow(stack, Priority.ALWAYS);    // Give stack any extra space
 	}
 
-	private void addTextToChat(Text chatMessage)
+	private BorderPane addBorderPane()
 	{
-		Platform.runLater(() -> {
-			VBox.setMargin(chatMessage, new Insets(0, 0, 0, 8));
-			chatBox.getChildren().add(chatMessage);
-		});
-	}
-
-	private BorderPane addBorderPane() {
 		BorderPane flow = new BorderPane();
 		flow.setPadding(new Insets(5, 5, 10, 5));
 		flow.setMinWidth(240);
@@ -195,7 +213,7 @@ public class GameScreen
 		scrollPane.setStyle(" -fx-background: #F0F5FA; -fx-border-color: #F0F5FA;");
 		scrollPane.setMaxHeight(620);
 		scrollPane.setMaxWidth(240);
-		scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		scrollPane.vvalueProperty().bind(chatBox.heightProperty());
 
@@ -240,6 +258,7 @@ public class GameScreen
 	public GridPane addBoardPane()
 	{
 		GridPane gridPane = new GridPane();
+		gridPane.setAlignment(Pos.CENTER);
 		//grid.setHgap(10);
 		//grid.setVgap(10);
 		//grid.setPadding(new Insets(0, 10, 0, 10));
@@ -254,27 +273,31 @@ public class GameScreen
 
 	private void createBoard(GridPane grid)
 	{
-		int rowNum = 10;
-		int colNum = 10;
-
-		//grid.getColumnConstraints().add(new ColumnConstraints(gridWidth));
-		//grid.getRowConstraints().add(new RowConstraints(gridHeight));
-
 		Random rand = new Random();
 		Color[] colors = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED};
 
-		for (int row = 0; row < rowNum; row++) {
-			for (int col = 0; col < colNum; col++) {
+		for (int row = 0; row < 19; row++)
+		{
+			for (int col = 0; col < 19; col++)
+			{
 				int n = rand.nextInt(4);
 				Rectangle rec = new Rectangle();
-				rec.setWidth(50);
-				rec.setHeight(50);
+				rec.setWidth(30);
+				rec.setHeight(30);
 				rec.setFill(colors[n]);
 				GridPane.setRowIndex(rec, row);
 				GridPane.setColumnIndex(rec, col);
 				grid.getChildren().addAll(rec);
 			}
 		}
+	}
+
+	private void addTextToChat(Text chatMessage)
+	{
+		Platform.runLater(() -> {
+			VBox.setMargin(chatMessage, new Insets(0, 0, 0, 8));
+			chatBox.getChildren().add(chatMessage);
+		});
 	}
 
 	public void sendToChat(String chat)

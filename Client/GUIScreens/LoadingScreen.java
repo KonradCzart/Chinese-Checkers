@@ -50,7 +50,6 @@ public class LoadingScreen
 		stage.setOnCloseRequest(e ->
 		{
 			Platform.exit();
-			// TODO release socket!
 			System.exit(0);
 		});
 
