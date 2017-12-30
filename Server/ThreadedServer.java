@@ -220,10 +220,10 @@ public class ThreadedServer implements Runnable {
 							if(tmp.getGameID() == this.gameID)
 							{
 								String line2 = name + ": " + line;
-								ObjectOutputStream outStream;
-								outStream = tmp.getObjectOutputStream();
+								ObjectOutputStream outS;
+								outS = tmp.getObjectOutputStream();
 								ChatMessage newMessage = new ChatMessage(line2);
-								outStream.writeObject(newMessage);
+								outS.writeObject(newMessage);
 							}
 						}
 					}
@@ -329,6 +329,32 @@ public class ThreadedServer implements Runnable {
 							}
 						}
 						
+					}
+					else if(objectMessage instanceof SuccessMessage)
+					{
+						SuccessMessage succes = (SuccessMessage) objectMessage;
+						if(succes.getCodSuccess() == 11111)
+						{
+							if(myGame != null)
+							{
+								myGame.startGame();
+								ArrayList<Pawn> tabPawn = myGame.getArrayPawn();
+								for (ClientHandler tmp : client)
+								{
+									if(tmp.getGameID() == this.gameID)
+									{
+										ObjectOutputStream outS;
+										outS = tmp.getObjectOutputStream();
+										
+										for(Pawn currentPawn : tabPawn)
+										{
+											AddPawnMessage addPawn = new AddPawnMessage(currentPawn.getPlayer(), currentPawn.getX(), currentPawn.getY());
+											outS.writeObject(addPawn);
+										}
+									}
+								}
+							}
+						}
 					}
 
 

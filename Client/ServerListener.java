@@ -53,6 +53,11 @@ public class ServerListener implements Runnable
 					String line = success.getDescription();
 					game.successDialog(line);
 				}
+				else if(tmp instanceof AddPawnMessage)
+				{
+					AddPawnMessage addPawn = (AddPawnMessage) tmp;
+					game.addPawn(addPawn.getPlayer(), addPawn.getMyX(), addPawn.getMyY());
+				}
 				
 			}
 			

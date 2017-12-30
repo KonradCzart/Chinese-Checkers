@@ -248,7 +248,12 @@ public class GameScreen
 
 		startGameButton.setOnAction(event ->
 		{
-			gameIdDialog();
+			SuccessMessage newMessage = new SuccessMessage(11111, "start game");
+			try {
+				myClient.sendMessage(newMessage);
+			} catch (IOException e) {
+				
+			}
 
 		});
 //		createGameButton.setOnAction(event ->
@@ -378,15 +383,6 @@ public class GameScreen
 				}
 			}
 		}
-
-
-		addPawn(ColorPlayer.PLAYER_ONE, 8, 11);
-		addPawn(ColorPlayer.PLAYER_THREE, 7, 14);
-		addPawn(ColorPlayer.PLAYER_FOUR, 9, 10);
-
-
-
-
 
 	}
 
