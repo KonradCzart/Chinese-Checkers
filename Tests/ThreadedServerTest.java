@@ -1,6 +1,5 @@
 package Tests;
 
-import Client.SocketClient;
 import Server.ThreadedServer;
 import org.junit.*;
 
@@ -23,7 +22,6 @@ public class ThreadedServerTest {
 			Runnable r = server;
 			serverThread = new Thread(r);
 			serverThread.start();
-			new SocketClient();
 		}
 	}
 

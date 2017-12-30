@@ -1,5 +1,8 @@
 package Client.GUIScreens;
 
+import Game.BoardCircle;
+import Game.Field;
+import Game.FieldStatus;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -8,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -39,6 +42,7 @@ public class GameScreen
 	private Client myClient;
 	private VBox chatBox;
 	private ScrollPane scrollPane;
+	private BoardCircle[][] tabField;
 	private boolean isChatCreated;
 
 	GameScreen(String playerName, Stage stage, Client myClient)
@@ -58,6 +62,8 @@ public class GameScreen
 		Platform.setImplicitExit(false);
 		isChatCreated = false;
 		hbox = new HBox();
+		tabField = new BoardCircle[19][19];
+		createBoard();
 		load();
 
 	}
@@ -80,8 +86,6 @@ public class GameScreen
 		hbox = addHBox();
 
 		border.setTop(hbox);
-//		border.setLeft(addVBox());
-
 		addStackPane(hbox);
 		border.setCenter(addBoardPane());
 		border.setRight(addBorderPane());
@@ -259,37 +263,169 @@ public class GameScreen
 	{
 		GridPane gridPane = new GridPane();
 		gridPane.setAlignment(Pos.CENTER);
+		paintBoard(gridPane);
 		//grid.setHgap(10);
 		//grid.setVgap(10);
-		//grid.setPadding(new Insets(0, 10, 0, 10));
+		//gridPane.setPadding(new Insets(10, 10, 10, 10));
 
 //		Text chartTitle = new Text("Current Year");
 //		chartTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-		createBoard(gridPane);
+
 //		grid.add(chartTitle, 0, 0);
 
 		return gridPane;
 	}
 
-	private void createBoard(GridPane grid)
+	private void paintBoard(GridPane grid)
 	{
-		Random rand = new Random();
-		Color[] colors = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED};
+		FieldStatus currentStatus;
 
-		for (int row = 0; row < 19; row++)
+		for(int i=0; i<19; i++)
 		{
-			for (int col = 0; col < 19; col++)
+			for(int j=0; j<19; j++)
 			{
-				int n = rand.nextInt(4);
-				Rectangle rec = new Rectangle();
-				rec.setWidth(30);
-				rec.setHeight(30);
-				rec.setFill(colors[n]);
-				GridPane.setRowIndex(rec, row);
-				GridPane.setColumnIndex(rec, col);
-				grid.getChildren().addAll(rec);
+				currentStatus = tabField[i][j].getFieldStatus();
+
+				if(currentStatus == FieldStatus.AVAILABLE)
+				{
+					BoardCircle c = tabField[i][j];
+					c.setRadius(14);
+					c.setFill(Color.valueOf("#FFFFFF"));
+					GridPane.setRowIndex(c, i);
+					GridPane.setColumnIndex(c, j);
+					GridPane.setMargin(c, new Insets(5, 5, 5, 5));
+					grid.getChildren().addAll(c);
+				}
+				else if(currentStatus == FieldStatus.CLOSED)
+				{
+					//System.out.printf("_");
+				}
+				else if(currentStatus == FieldStatus.UNAVAILABLE)
+				{
+					//System.out.printf("8");
+				}
 			}
+			//i++;
+			//System.out.printf("\n");
 		}
+//		Random rand = new Random();
+//		Color[] colors = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED};
+//
+//		for (int row = 0; row < 19; row++)
+//		{
+//			for (int col = 0; col < 19; col++)
+//			{
+//				int n = rand.nextInt(4);
+//				Circle c = new Circle();
+//				c.setRadius(15);
+//				c.setFill(colors[n]);
+//				GridPane.setRowIndex(c, row);
+//				GridPane.setColumnIndex(c, col);
+//				grid.getChildren().addAll(c);
+//			}
+//		}
+	}
+
+	private void createBoard()
+	{
+		int i = 0;
+
+		for(int j = 0; j<19; j++)
+			tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+		int k = 13;
+
+		for(i=1; i<5; i++)
+		{
+			for(int j = 0; j < k; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			for(int j = k; j < 14; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			for(int j = 14; j < 19; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			k--;
+		}
+
+		k = 4;
+		for(i=5; i<10; i++)
+		{
+			for(int j = 0; j < 5; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			int tmp = 5 + k;
+
+			for(int j = 5; j < tmp; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			for(int j = tmp; j < 14; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			tmp = 14 + k;
+
+			for(int j = 14; j < tmp; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			for(int j = tmp; j < 19; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			k--;
+
+		}
+
+
+		k = 4;
+		int c = 8;
+
+		for(i=10; i<14; i++)
+		{
+			for(int j = 0; j < k; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+
+			for(int j = k; j < 5; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			int tmp = 5 + c;
+
+			for(int j = 5; j < tmp; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+
+			k--;
+			c--;
+
+			for(int j = tmp; j < 14; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			for(int j = 14; j < 19; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+		}
+
+		k = 4;
+
+		for(i=14; i<18; i++)
+		{
+			for(int j = 0; j < 5; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			int tmp = k + 5;
+
+			for(int j = 5; j < tmp; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			for(int j = tmp; j < 19; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			k--;
+		}
+
+		for(int j = 0; j<19; j++)
+			tabField[18][j] = new BoardCircle(FieldStatus.CLOSED);
+
 	}
 
 	private void addTextToChat(Text chatMessage)

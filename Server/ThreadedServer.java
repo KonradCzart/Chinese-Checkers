@@ -199,16 +199,16 @@ public class ThreadedServer implements Runnable {
 				
 				Object objectMessage;
 				inStream = new ObjectInputStream(coming.getInputStream());
-				
-				
-				while((objectMessage = inStream.readObject()) != null) 
+
+
+				while((objectMessage = inStream.readObject()) != null)
 				{
 					if(objectMessage instanceof ChatMessage)
 					{
 						ChatMessage chatMessage = (ChatMessage) objectMessage;
 						String line = chatMessage.getDescription();
-						
-						for (ClientHandler tmp : client) 
+
+						for (ClientHandler tmp : client)
 						{
 							if(tmp.getGameID() == this.gameID)
 							{
@@ -225,18 +225,18 @@ public class ThreadedServer implements Runnable {
 						NewNameMessage nameMessage = (NewNameMessage) objectMessage;
 						String newName = nameMessage.getName();
 						Boolean isName = false;
-						
-						for (ClientHandler tmp : client) 
+
+						for (ClientHandler tmp : client)
 						{
 							String oldName = tmp.getName();
-							
+
 							if(oldName.equals(newName))
 							{
 								isName = true;
 								break;
 							}
 						}
-						
+
 						if(!isName)
 						{
 							name = newName;
@@ -244,7 +244,7 @@ public class ThreadedServer implements Runnable {
 							SuccessMessage newMessage = new SuccessMessage(3689, line);
 							outStream.writeObject(newMessage);
 						}
-						else 
+						else
 						{
 							FailMessage newMessage = new FailMessage(3689, "Your name is reserve");
 							outStream.writeObject(newMessage);
@@ -261,15 +261,15 @@ public class ThreadedServer implements Runnable {
 						else
 						{
 							int tmpID;
-							
-							for (Game tmp : tabGame) 
+
+							for (Game tmp : tabGame)
 							{
 								tmpID = tmp.getID();
-								
+
 								if(gameMessage.getIdGame() == tmpID)
 									joinStatus = this.joinGame(tmpID);
 							}
-							
+
 							if(joinStatus)
 							{
 								String line = "Success to join the game. Your game code: " + gameID;
@@ -284,8 +284,8 @@ public class ThreadedServer implements Runnable {
 						}
 					}
 
-					
-				}	
+
+				}
 			} 
 			catch (IOException e) 
 			{

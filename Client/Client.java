@@ -1,6 +1,7 @@
 package Client;
 
 import java.io.IOException;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -10,13 +11,13 @@ import java.util.Observer;
 import Client.GUIScreens.GameScreen;
 import Message.*;
 import Server.ThreadedServer;
+import javafx.scene.shape.Circle;
 
 public class Client
 {
 	private Socket socket;
 	private ServerListener serverLisener;
 	private ObjectOutputStream outStream;
-	// pppp
 	private String localHost;
 	private int adress;
 
@@ -34,10 +35,8 @@ public class Client
 	
 	public void connectServer() throws UnknownHostException, IOException
 	{
-		
-			socket = new Socket(localHost, adress);
-		
-			outStream = new ObjectOutputStream ( socket.getOutputStream());
+		socket = new Socket(localHost, adress);
+		outStream = new ObjectOutputStream ( socket.getOutputStream());
 	}
 	
 	public void startServerLisener(GameScreen game)
@@ -47,7 +46,6 @@ public class Client
 		Runnable r = serverLisener;
 		Thread t = new Thread(r);
 		t.start();
-		
 	}
 	
 	public void sendMessage(Message newMessage) throws IOException
@@ -57,14 +55,14 @@ public class Client
 
 	public void closeConnection()
 	{
-		try
-		{
-			outStream.close();
-			socket.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+//		try
+//		{
+//			outStream.close();
+//			socket.close();
+//		}
+//		catch (IOException e)
+//		{
+//			e.printStackTrace();
+//		}
 	}
 }

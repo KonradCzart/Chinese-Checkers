@@ -5,5 +5,4 @@ public enum FieldStatus
 	UNAVAILABLE,
 	AVAILABLE,
 	CLOSED
-	
 }

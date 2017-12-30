@@ -3,8 +3,6 @@ package Game;
 import java.util.ArrayList;
 
 
-
-
 public class Game 
 {
 	private Field[][] tabField;
@@ -297,7 +295,7 @@ public class Game
 		
 		for(int j = 0; j<19; j++)
 			tabField[i][j] = new Field(FieldStatus.CLOSED , Zone.ZONE_EMPTY);
-		
+
 		int k = 13;
 		
 		for(i=1; i<5; i++)
@@ -401,7 +399,6 @@ public class Game
 		
 		for(int i=0; i<19; i++)
 		{
-			
 			for(int j=0; j<19; j++)
 			{
 				currentStatus = tabField[i][j].getFieldStatus();
