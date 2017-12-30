@@ -12,7 +12,6 @@ import Message.*;
 * @author Konrad Czart
 * Server class with multi thread connection in client
 */ 
-
 public class ThreadedServer implements Runnable {
 	private ArrayList<ClientHandler> client;
 	private ArrayList<Game> tabGame;
@@ -20,7 +19,7 @@ public class ThreadedServer implements Runnable {
 	private boolean serverRun;
 	private static int countIdGame;
 	
-	
+	//coment
 	private ThreadedServer()
 	{
 		client = new ArrayList<ClientHandler>();
