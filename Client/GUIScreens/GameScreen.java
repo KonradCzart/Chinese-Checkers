@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -42,6 +43,7 @@ public class GameScreen
 	private ScrollPane scrollPane;
 	private BoardCircle[][] tabField;
 	private BoardCircle clickedBoardCircle;
+	private Paint lastClickedColor;
 	private boolean isChatCreated;
 
 	GameScreen(String playerName, Stage stage, Client myClient)
@@ -392,17 +394,22 @@ public class GameScreen
 		if(clickedBoardCircle == null)
 		{
 			clickedBoardCircle = circle;
+			lastClickedColor = clickedBoardCircle.getFill();
 			clickedBoardCircle.setFill(Color.valueOf("#333333"));
 		}
 		else if(clickedBoardCircle == circle)
 		{
-			clickedBoardCircle.setFill(Color.valueOf("#FFFFFF"));
+			clickedBoardCircle.setFill(lastClickedColor);
 			clickedBoardCircle = null;
 		}
 		else
 		{
+			// JESLI POLE JEST PIONKIEM TO WTEDY MOZNA TU COS ZROBIC
 			// Czekaj na potwierdznie ruchu i wtedy rusz ten pionek tam..
 //			move(clickedBoardCircle, circle);
+
+			// jesli metoda move pozwoli to rusz
+			circle.setFill(lastClickedColor);
 			clickedBoardCircle.setFill(Color.valueOf("#FFFFFF"));
 			clickedBoardCircle = null;
 		}
