@@ -89,56 +89,64 @@ public class Game
 		start = true;
 	}
 	
+	public Boolean getStartStatus()
+	{
+		return start;
+	}
+	
 	public ColorPlayer addPalyer()
 	{
-		
-		if(countPlayer == 0 && !start)
+		if(!start)
 		{
-			addPawn(ColorPlayer.PLAYER_ONE, Zone.ZONE_ONE);
-			countPlayer++;
-			currentPlayer = 0;
+			if(countPlayer == 0)
+			{
+				addPawn(ColorPlayer.PLAYER_ONE, Zone.ZONE_ONE);
+				countPlayer++;
+				currentPlayer = 0;
 			
-			return ColorPlayer.PLAYER_ONE;
-		}
-		else if(countPlayer == 1  && !start)
-		{
-			addPawn(ColorPlayer.PLAYER_TWO, Zone.ZONE_FOUR);
-			countPlayer++;
+				return ColorPlayer.PLAYER_ONE;
+			}
+			else if(countPlayer == 1)
+			{
+				addPawn(ColorPlayer.PLAYER_TWO, Zone.ZONE_FOUR);
+				countPlayer++;
 			
-			return ColorPlayer.PLAYER_TWO;
-		}
-		else if(countPlayer == 2  && !start)
-		{
-			addPawn(ColorPlayer.PLAYER_THREE, Zone.ZONE_TWO);
-			countPlayer++;
+				return ColorPlayer.PLAYER_TWO;
+			}
+			else if(countPlayer == 2)
+			{
+				addPawn(ColorPlayer.PLAYER_THREE, Zone.ZONE_TWO);
+				countPlayer++;
 			
-			return ColorPlayer.PLAYER_THREE;
-		}
-		else if(countPlayer == 3 && !start)
-		{
-			addPawn(ColorPlayer.PLAYER_FOUR, Zone.ZONE_FIVE);
-			countPlayer++;
+				return ColorPlayer.PLAYER_THREE;
+			}
+			else if(countPlayer == 3)
+			{
+				addPawn(ColorPlayer.PLAYER_FOUR, Zone.ZONE_FIVE);
+				countPlayer++;
 			
-			return ColorPlayer.PLAYER_FOUR;
-		}
-		else if(countPlayer == 4 && !start)
-		{
-			addPawn(ColorPlayer.PLAYER_FIVE, Zone.ZONE_THREE);
-			countPlayer++;
+				return ColorPlayer.PLAYER_FOUR;
+			}
+			else if(countPlayer == 4)
+			{
+				addPawn(ColorPlayer.PLAYER_FIVE, Zone.ZONE_THREE);
+				countPlayer++;
 			
-			return ColorPlayer.PLAYER_FIVE;
-		}
-		else if(countPlayer == 5 && !start)
-		{
-			addPawn(ColorPlayer.PLAYER_SIX, Zone.ZONE_SIX);
-			countPlayer++;
+				return ColorPlayer.PLAYER_FIVE;
+			}
+			else if(countPlayer == 5)
+			{
+				addPawn(ColorPlayer.PLAYER_SIX, Zone.ZONE_SIX);
+				countPlayer++;
 			
-			return ColorPlayer.PLAYER_SIX;
+				return ColorPlayer.PLAYER_SIX;
+			}
+			else
+				return ColorPlayer.PLAYER_EMPTY;
+			
 		}
 		else
-		{
 			return ColorPlayer.PLAYER_EMPTY;
-		}
 
 	}
 	

@@ -162,8 +162,9 @@ public class ThreadedServer implements Runnable {
 			countIdGame++;
 		}
 		
-		private void joinGame(int idGame)
+		private Boolean joinGame(int idGame)
 		{
+			Boolean join = false;
 			Game newGame = null;
 			
 			for (Game tmpGame : tabGame) 
@@ -172,15 +173,22 @@ public class ThreadedServer implements Runnable {
 				
 				if(currentIdGame == idGame)
 				{
-					newGame = tmpGame;
-					break;
+					if(!tmpGame.getStartStatus())
+					{
+						newGame = tmpGame;
+						this.myPlayer = newGame.addPalyer();
+						this.myGame = newGame;
+						this.gameID = idGame;
+						join = true;
+					}
 				}
 				
 			}
 			
-			this.myPlayer = newGame.addPalyer();
-			this.myGame = newGame;
-			this.gameID = idGame;
+			return join;
+			
+			
+			
 		}
 		
 		@Override
@@ -240,7 +248,7 @@ public class ThreadedServer implements Runnable {
 					else if(objectMessage instanceof JoinGameMessage)
 					{
 						JoinGameMessage gameMessage = (JoinGameMessage) objectMessage;
-						
+						Boolean joinStatus = false;
 						if(gameMessage.getNewGame())
 						{
 							this.createGame();
@@ -254,10 +262,19 @@ public class ThreadedServer implements Runnable {
 								tmpID = tmp.getID();
 								
 								if(gameMessage.getIdGame() == tmpID)
-									this.joinGame(tmpID);
+									joinStatus = this.joinGame(tmpID);
 							}
 							
-							// dodac wysylanie bledu jesli nie ma gry o takim id
+							if(joinStatus)
+							{
+								SuccessMessage newMessage = new SuccessMessage(2567, "Success to join the game");
+								outStream.writeObject(newMessage);
+							}
+							else
+							{
+								FailMessage newMessage = new FailMessage(2567, "Fail to join the game");
+								outStream.writeObject(newMessage);
+							}
 						}
 					}
 
