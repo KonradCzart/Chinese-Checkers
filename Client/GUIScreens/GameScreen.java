@@ -103,23 +103,10 @@ public class GameScreen
 		hbox.setSpacing(10);
 		hbox.setStyle("-fx-background-color: #336699;");
 
-		joinGameButton = new Button("Join game");
-		createGameButton = new Button("Create game");
-
-		joinGameButton.setPrefSize(100, 20);
-		createGameButton.setPrefSize(100, 20);
-
-		joinGameButton.setOnAction(event ->
-		{
-			errorDialog("Jeszcze nie okodowano");
-		});
-		createGameButton.setOnAction(event ->
-		{
-			errorDialog("Przycisk createGame");
-		});
 
 
-		hbox.getChildren().addAll(joinGameButton, createGameButton);
+
+		//hbox.getChildren().addAll(joinGameButton, createGameButton);
 
 		return hbox;
 	}
@@ -187,16 +174,46 @@ public class GameScreen
 		result.ifPresent(usernamePassword -> new LoadingScreen(stage));
 	}
 
+
+	public void gameIdDialog()
+	{
+		TextInputDialog dialog = new TextInputDialog("1");
+		dialog.setTitle("Change game ID");
+		dialog.setHeaderText("");
+		dialog.setContentText("Please enter game ID:");
+
+		Optional<String> result = dialog.showAndWait();
+
+		result.ifPresent(name ->
+		{
+			int value = Integer.parseInt(result.get());
+			System.out.println(value);
+		});
+	}
 	private void addStackPane(HBox hb)
 	{
-		StackPane stack = new StackPane();
-		Text helpText = new Text("You are connected!");
-		helpText.setFill(Color.GREEN);
-		helpText.setStroke(Color.web("#FFFFFF"));
+		HBox stack = new HBox();
 
-		stack.getChildren().addAll(helpText);
+		joinGameButton = new Button("Join game");
+		createGameButton = new Button("Create game");
+
+		joinGameButton.setPrefSize(100, 20);
+		createGameButton.setPrefSize(100, 20);
+
+		joinGameButton.setOnAction(event ->
+		{
+			gameIdDialog();
+			//errorDialog("Jeszcze nie okodowano");
+		});
+		createGameButton.setOnAction(event ->
+		{
+			errorDialog("Przycisk createGame");
+		});
+
+		stack.setSpacing(8);
+		stack.getChildren().addAll(joinGameButton, createGameButton);
 		stack.setAlignment(Pos.CENTER_RIGHT);     // Right-justify nodes in stack
-		StackPane.setMargin(helpText, new Insets(0, 10, 0, 0)); // Center "?"
+		StackPane.setMargin(joinGameButton, new Insets(0, 10, 0, 0)); // Center "?"
 
 		hb.getChildren().add(stack);            // Add to HBox from Example 1-2
 		HBox.setHgrow(stack, Priority.ALWAYS);    // Give stack any extra space
@@ -217,6 +234,8 @@ public class GameScreen
 		scrollPane.setStyle(" -fx-background: #F0F5FA; -fx-border-color: #F0F5FA;");
 		scrollPane.setMaxHeight(620);
 		scrollPane.setMaxWidth(240);
+		scrollPane.setFitToWidth(true);
+		scrollPane.setFitToHeight(true);
 		scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		scrollPane.vvalueProperty().bind(chatBox.heightProperty());
@@ -254,6 +273,7 @@ public class GameScreen
 		tmpHBox.setAlignment(Pos.CENTER);
 		tmpHBox.getChildren().addAll(chatField, sendChatButton);
 
+
 		flow.setBottom(tmpHBox);
 
 		return flow;
@@ -263,6 +283,8 @@ public class GameScreen
 	{
 		GridPane gridPane = new GridPane();
 		gridPane.setAlignment(Pos.CENTER);
+		gridPane.setRotate(45);
+
 		paintBoard(gridPane);
 		//grid.setHgap(10);
 		//grid.setVgap(10);
@@ -289,11 +311,11 @@ public class GameScreen
 				if(currentStatus == FieldStatus.AVAILABLE)
 				{
 					BoardCircle c = tabField[i][j];
-					c.setRadius(14);
+					c.setRadius(13);
 					c.setFill(Color.valueOf("#FFFFFF"));
 					GridPane.setRowIndex(c, i);
 					GridPane.setColumnIndex(c, j);
-					GridPane.setMargin(c, new Insets(5, 5, 5, 5));
+					GridPane.setMargin(c, new Insets(7, 7, 7, 7));
 					grid.getChildren().addAll(c);
 				}
 				else if(currentStatus == FieldStatus.CLOSED)
