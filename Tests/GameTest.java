@@ -72,6 +72,7 @@ public class GameTest {
 			myGame.move(ColorPlayer.PLAYER_TWO, 14, 5, 13, 5);
 			myGame.move(ColorPlayer.PLAYER_THREE, 5, 14, 5, 13);
 			myGame.move(ColorPlayer.PLAYER_ONE, 4, 11, 6, 9);
+			myGame.move(ColorPlayer.PLAYER_ONE, 3, 11, 4, 11);
 		} catch (BadPlayerException e) {
 			fail();
 		} catch (IncorrectMoveException e) {

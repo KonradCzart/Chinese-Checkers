@@ -10,6 +10,7 @@ public class Game
 	private int currentPlayer;
 	private Boolean start;
 	private int id;
+	private Boolean endTurn;
 	
 	private ArrayList<Pawn> tabPawn;
 	
@@ -19,6 +20,7 @@ public class Game
 		currentPlayer = 0;
 		tabField = new Field[19][19];
 		tabPawn = new ArrayList<Pawn>();
+		endTurn = false;
 		
 		createBoard();
 		start = false;
@@ -72,6 +74,9 @@ public class Game
 			
 			tabField[pawnX][pawnY].setFieldStatus(FieldStatus.AVAILABLE);
 			tabField[newX][newY].setFieldStatus(FieldStatus.UNAVAILABLE);
+			
+			if(endTurn)
+				this.endMove(movePlayer);
 		}
 		
 	}
@@ -152,6 +157,7 @@ public class Game
 	{
 		int tmpX;
 		int tmpY;
+		endTurn = true;
 		
 		if(newX >= 19 || newX < 0 || newY >= 19 || newY < 0)
 			return false;
@@ -176,7 +182,10 @@ public class Game
 			tmpY = tmpY + 1;
 			
 			if(tmpX == newX && tmpY == newY)
+			{
+				endTurn = false;
 				return true;
+			}
 		}
 		
 		//right (2)
@@ -193,7 +202,10 @@ public class Game
 			tmpY = tmpY + 1;
 			
 			if(tmpX == newX && tmpY == newY)
+			{
+				endTurn = false;
 				return true;
+			}
 		}
 
 		//down (3)
@@ -210,7 +222,10 @@ public class Game
 			tmpY = tmpY;
 			
 			if(tmpX == newX && tmpY == newY)
+			{
+				endTurn = false;
 				return true;
+			}
 		}
 		
 		//down left (4)
@@ -227,7 +242,10 @@ public class Game
 			tmpY = tmpY - 1;
 			
 			if(tmpX == newX && tmpY == newY)
+			{
+				endTurn = false;
 				return true;
+			}
 		}		
 		//left (5)
 		
@@ -243,7 +261,10 @@ public class Game
 			tmpY = tmpY - 1;
 			
 			if(tmpX == newX && tmpY == newY)
+			{
+				endTurn = false;
 				return true;
+			}
 		}
 		
 		//upper (6)
@@ -260,7 +281,10 @@ public class Game
 			tmpY = tmpY;
 			
 			if(tmpX == newX && tmpY == newY)
+			{
+				endTurn = false;
 				return true;
+			}
 		}		
 		
 		return false;
