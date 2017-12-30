@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -83,11 +84,17 @@ public class LoadingScreen
 
 		userTextField = new TextField();
 		userTextField.setPromptText("login");
-		userTextField.setFocusTraversable(false);
+		userTextField.setOnKeyPressed(event ->
+		{
+			if(event.getCode() == KeyCode.ENTER)
+				login();
+		});
 		grid.add(userTextField, 1, 4);
 
 		btn = new Button("Sign in");
-		btn.setDefaultButton(true);
+		btn.setOnAction(event -> login());
+
+
 		HBox hbBtn = new HBox(10);
 		hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
 		hbBtn.getChildren().add(btn);
@@ -97,47 +104,42 @@ public class LoadingScreen
 		grid.add(connectingText, 1, 7);
 
 		grid.setBackground(new Background(new BackgroundFill(Color.valueOf("#2c2f33"), CornerRadii.EMPTY, Insets.EMPTY)));
-
-		performLoginButton();
 	}
 
 	/**
-	 * Performs login button and validates player name.
+	 * Try Log to game and validates player name.
 	 */
-	private void performLoginButton()
+	private void login()
 	{
-		btn.setOnAction(event ->
+		String name = userTextField.getText();
+
+		if (name.matches("[\\w]+"))
 		{
-			String name = userTextField.getText();
+			connectingText.setFill(Color.GREEN);
+			connectingText.setText("Connecting...");
+			connectingText.isVisible();
+			playerName = name;
 
-			if (name.matches("[\\w]+"))
+			try
 			{
-				connectingText.setFill(Color.GREEN);
-				connectingText.setText("Connecting...");
-				connectingText.isVisible();
-				playerName = name;
-
-				try
-				{
-					myClient.connectServer();
-					new GameScreen(playerName, stage, myClient);
-				}
-				catch (IOException e) {
-					connectingText.setFill(Color.RED);
-					connectingText.setText("Connection failed.");
-				}
-				
+				myClient.connectServer();
+				new GameScreen(playerName, stage, myClient);
 			}
-			else
-			{
-				Alert alert = new Alert(Alert.AlertType.INFORMATION);
-				alert.setTitle("Error");
-				alert.setHeaderText(null);
-				alert.setContentText("Your name is invalid. Use only alphanumeric characters");
-
-				alert.showAndWait();
+			catch (IOException e) {
+				connectingText.setFill(Color.RED);
+				connectingText.setText("Connection failed.");
 			}
-		});
+
+		}
+		else
+		{
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+			alert.setContentText("Your name is invalid. Use only alphanumeric characters");
+
+			alert.showAndWait();
+		}
 	}
 
 }
