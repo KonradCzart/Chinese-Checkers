@@ -158,6 +158,13 @@ public class ThreadedServer implements Runnable {
 			this.myGame = newGame;
 			this.myPlayer = newGame.addPalyer();
 			
+			String line = "Success to create the game. Your game code: " + gameID;
+			SuccessMessage newMessage = new SuccessMessage(2567, line);
+			try {
+				outStream.writeObject(newMessage);
+			} catch (IOException e) {
+
+			}
 			countIdGame++;
 		}
 		

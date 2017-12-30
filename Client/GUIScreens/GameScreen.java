@@ -23,8 +23,8 @@ import java.util.Optional;
 import java.util.Random;
 
 import Client.Client;
-import Message.ChatMessage;
-import Message.NewNameMessage;
+import Message.*;
+
 
 /**
  * Created by Kacper on 2017-12-29.
@@ -111,14 +111,33 @@ public class GameScreen
 		return hbox;
 	}
 
-	private void errorDialog(String errorMessage)
+	
+	public void errorDialog(String errorMessage)
 	{
-		Alert alert = new Alert(Alert.AlertType.ERROR);
-		alert.setTitle("Error");
-		alert.setHeaderText("");
-		alert.setContentText(errorMessage);
+		
+		Platform.runLater(() -> {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("");
+			alert.setContentText(errorMessage);
 
-		alert.showAndWait();
+			alert.showAndWait();
+		});
+		
+	}
+	
+	public void successDialog(String successMessage)
+	{
+		
+		Platform.runLater(() -> {
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("Succes");
+			alert.setHeaderText("");
+			alert.setContentText(successMessage);
+
+			alert.showAndWait();
+		});
+		
 	}
 
 	private void changeServer()
@@ -187,7 +206,13 @@ public class GameScreen
 		result.ifPresent(name ->
 		{
 			int value = Integer.parseInt(result.get());
-			System.out.println(value);
+			
+			JoinGameMessage newJoinMessage = new JoinGameMessage(value, false);
+			try {
+				myClient.sendMessage(newJoinMessage);
+			} catch (IOException e) {
+				errorDialog("no send message!");
+			}
 		});
 	}
 	private void addStackPane(HBox hb)
@@ -203,11 +228,16 @@ public class GameScreen
 		joinGameButton.setOnAction(event ->
 		{
 			gameIdDialog();
-			//errorDialog("Jeszcze nie okodowano");
+
 		});
 		createGameButton.setOnAction(event ->
 		{
-			errorDialog("Przycisk createGame");
+			JoinGameMessage newJoinMessage = new JoinGameMessage(0, true);
+			try {
+				myClient.sendMessage(newJoinMessage);
+			} catch (IOException e) {
+				errorDialog("no send message!");
+			}
 		});
 
 		stack.setSpacing(8);

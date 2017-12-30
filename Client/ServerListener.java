@@ -41,6 +41,18 @@ public class ServerListener implements Runnable
 					game.sendToChat(line);
 
 				}
+				else if(tmp instanceof FailMessage)
+				{
+					FailMessage fail = (FailMessage) tmp;
+					String line = fail.getDescription();
+					game.errorDialog(line);
+				}
+				else if(tmp instanceof SuccessMessage)
+				{
+					SuccessMessage success = (SuccessMessage) tmp;
+					String line = success.getDescription();
+					game.successDialog(line);
+				}
 				
 			}
 			
