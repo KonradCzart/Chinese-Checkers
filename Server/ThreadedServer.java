@@ -336,11 +336,9 @@ public class ThreadedServer implements Runnable {
 			} 
 			catch (IOException e) 
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("fail server 1");
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("fail server 2");
 			}			
 		}
 	}
