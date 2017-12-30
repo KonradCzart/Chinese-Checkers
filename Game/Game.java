@@ -11,6 +11,7 @@ public class Game
 	private Boolean start;
 	private int id;
 	private Boolean endTurn;
+	private Pawn currentPawn;
 	
 	private ArrayList<Pawn> tabPawn;
 	
@@ -21,7 +22,7 @@ public class Game
 		tabField = new Field[19][19];
 		tabPawn = new ArrayList<Pawn>();
 		endTurn = false;
-		
+		currentPawn = null;
 		createBoard();
 		start = false;
 	}
@@ -39,11 +40,13 @@ public class Game
 			throw new BadPlayerException();
 		
 		currentPlayer = (currentPlayer + 1) % countPlayer;
+		currentPawn = null;
 	}
 	
 	public void move(ColorPlayer movePlayer, int oldX, int oldY, int newX, int newY) throws BadPlayerException, IncorrectMoveException
 	{
-		Pawn currentPawn = null;
+		
+		Boolean isPawn = false;
 		Boolean correctMove;
 		int pawnX = -10;
 		int pawnY = -10;
@@ -53,18 +56,35 @@ public class Game
 		if(movePlayer != queuePlayer)
 			throw new BadPlayerException();
 		
-		for (Pawn tmp : tabPawn)
+		if(currentPawn != null)
 		{
-			pawnX = tmp.getX();
-			pawnY = tmp.getY();
+			pawnX = currentPawn.getX();
+			pawnY = currentPawn.getY();
 			
 			if(oldX == pawnX && oldY == pawnY)
 			{
-				currentPawn = tmp;
-				break;
+				isPawn = true;
+			}
+		}
+		else
+		{
+			for (Pawn tmp : tabPawn)
+			{
+				pawnX = tmp.getX();
+				pawnY = tmp.getY();
+				
+				if(oldX == pawnX && oldY == pawnY)
+				{
+					currentPawn = tmp;
+					isPawn = true;
+					break;
+				}
 			}
 		}
 		
+		if(!isPawn)
+			throw new IncorrectMoveException();
+			
 		if(currentPawn.getPlayer() != movePlayer)
 				throw new BadPlayerException();
 		
@@ -82,6 +102,7 @@ public class Game
 			
 			if(endTurn)
 				this.endMove(movePlayer);
+			
 		}
 		
 	}

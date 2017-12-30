@@ -244,16 +244,18 @@ public class ThreadedServer implements Runnable {
 							}
 						}
 
+
 						if(!isName)
 						{
 							name = newName;
 							String line = "Your new name is " + name;
-							SuccessMessage newMessage = new SuccessMessage(3689, line);
-							outStream.writeObject(newMessage);
+							//SuccessMessage newMessage = new SuccessMessage(3689, line);
+							//outStream.writeObject(newMessage);
 						}
 						else
 						{
-							FailMessage newMessage = new FailMessage(3689, "Your name is reserve");
+							String line = "Your name is reserved! You defaul namie is " + name;
+							FailMessage newMessage = new FailMessage(3689, line);
 							outStream.writeObject(newMessage);
 						}
 					}
@@ -261,14 +263,20 @@ public class ThreadedServer implements Runnable {
 					{
 						JoinGameMessage gameMessage = (JoinGameMessage) objectMessage;
 						Boolean joinStatus = false;
-						if(gameMessage.getNewGame())
+						
+						if(gameID != 0)
+						{
+							FailMessage newMessage = new FailMessage(4876, "You are already connected to the game!");
+							outStream.writeObject(newMessage);
+						}
+						else if(gameMessage.getNewGame())
 						{
 							this.createGame();
 						}
 						else
 						{
 							int tmpID;
-
+							
 							for (Game tmp : tabGame)
 							{
 								tmpID = tmp.getID();

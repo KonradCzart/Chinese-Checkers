@@ -38,7 +38,7 @@ public class GameScreen
 	private TextField chatField;
 	private Button sendChatButton;
 	private Button startGameButton;
-	private Button createGameButton;
+	private Button endRoundButton;
 	private Client myClient;
 	private VBox chatBox;
 	private ScrollPane scrollPane;
@@ -93,14 +93,48 @@ public class GameScreen
 		{
 			gameIdDialog();
 		});
+		
+		MenuItem setName = new MenuItem(("Set name"));
+		setName.setOnAction(event ->
+		{
+			TextInputDialog dialog = new TextInputDialog("");
+			dialog.setTitle("Set your name!");
+			dialog.setHeaderText("");
+			dialog.setContentText("New name:");
 
+			Optional<String> result = dialog.showAndWait();
+
+			result.ifPresent(name ->
+			{
+				
+				
+				String lineName = result.get();
+
+				if (lineName.matches("[\\w]+"))
+				{
+					NewNameMessage newMessage = new NewNameMessage(lineName);
+					try {
+						myClient.sendMessage(newMessage);
+					} catch (IOException e) {
+						errorDialog("no send message!");
+					}
+				}
+				else
+				{
+					String errorLine = "Your name is invalid. Use only alphanumeric characters";
+					errorDialog(errorLine);
+				}
+		
+			});
+		});
+		
 		MenuItem changeServer = new MenuItem(("Change Server"));
 		changeServer.setOnAction(t -> changeServer());
 
 		MenuItem exit = new MenuItem("Exit");
 		exit.setOnAction(t -> System.exit(0));
 
-		menuFile.getItems().addAll(joinGame, createGame, changeServer, new SeparatorMenuItem(), exit);
+		menuFile.getItems().addAll(joinGame, createGame, changeServer, setName, new SeparatorMenuItem(), exit);
 		menuBar.getMenus().addAll(menuFile, menuInfo);
 
 		hbox.getChildren().add(menuBar);
@@ -246,10 +280,10 @@ public class GameScreen
 		HBox stack = new HBox();
 
 		startGameButton = new Button("Start");
-		createGameButton = new Button("Create game");
+		endRoundButton = new Button("EndRound");
 
 		startGameButton.setPrefSize(100, 20);
-		createGameButton.setPrefSize(100, 20);
+		endRoundButton.setPrefSize(100, 20);
 
 		startGameButton.setOnAction(event ->
 		{
@@ -261,18 +295,18 @@ public class GameScreen
 			}
 
 		});
-//		createGameButton.setOnAction(event ->
-//		{
-//			JoinGameMessage newJoinMessage = new JoinGameMessage(0, true);
-//			try {
-//				myClient.sendMessage(newJoinMessage);
-//			} catch (IOException e) {
-//				errorDialog("no send message!");
-//			}
-//		});
+		endRoundButton.setOnAction(event ->
+		{
+			MoveMessage newMessage = new MoveMessage(true);
+			try {
+				myClient.sendMessage(newMessage);
+			} catch (IOException e) {
+				errorDialog("no send message!");
+			}
+		});
 
 		stack.setSpacing(8);
-		stack.getChildren().addAll(startGameButton, createGameButton);
+		stack.getChildren().addAll(startGameButton, endRoundButton);
 		stack.setAlignment(Pos.CENTER_RIGHT);     // Right-justify nodes in stack
 		StackPane.setMargin(startGameButton, new Insets(0, 10, 0, 0)); // Center "?"
 
