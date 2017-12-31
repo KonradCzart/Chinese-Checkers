@@ -45,6 +45,7 @@ public class GameScreen
 	private BoardCircle[][] tabField;
 	private BoardCircle clickedBoardCircle;
 	private Paint lastClickedColor;
+	private Text playerNameText;
 	private boolean isChatCreated;
 
 	GameScreen(String playerName, Stage stage, Client myClient)
@@ -158,10 +159,9 @@ public class GameScreen
 		hbox.setSpacing(10);
 		hbox.setStyle("-fx-background-color: #336699;");
 
+		playerNameText = new Text("Player");
 
-
-
-		//hbox.getChildren().addAll(joinGameButton, createGameButton);
+		hbox.getChildren().addAll(playerNameText);
 
 		return hbox;
 	}
@@ -477,52 +477,58 @@ public class GameScreen
 			clickedBoardCircle = null;
 		}
 	}
-	
-	public void movePawn(int oldX, int oldY, int newX, int newY, ColorPlayer movePlayer)
-	{
-		tabField[oldX][oldY].setFill(Color.valueOf("#FFFFFF"));
 
-		switch (movePlayer)
+	public void getPlayerNameColored(String name, ColorPlayer colorPlayer)
+	{
+		playerNameText.setText(name);
+
+		switch (colorPlayer)
 		{
 			case PLAYER_ONE:
 			{
-				tabField[newX][newY].setFill(Color.valueOf("#DFFF00"));
+				playerNameText.setFill(Color.valueOf("#DFFF00"));
 				break;
 			}
 			case PLAYER_TWO:
 			{
-				tabField[newX][newY].setFill(Color.valueOf("#FF00FF"));
+				playerNameText.setFill(Color.valueOf("#FF00FF"));
 				break;
 			}
 			case PLAYER_THREE:
 			{
-				tabField[newX][newY].setFill(Color.valueOf("#00FFFF"));
+				playerNameText.setFill(Color.valueOf("#00FFFF"));
 				break;
 			}
 			case PLAYER_FOUR:
 			{
-				tabField[newX][newY].setFill(Color.valueOf("#AFAFAF"));
+				playerNameText.setFill(Color.valueOf("#AFAFAF"));
 				break;
 			}
 			case PLAYER_FIVE:
 			{
-				tabField[newX][newY].setFill(Color.valueOf("#CAFAFA"));
+				playerNameText.setFill(Color.valueOf("#CAFAFA"));
 				break;
 			}
 			case PLAYER_SIX:
 			{
-				tabField[newX][newY].setFill(Color.valueOf("#CCCCCC"));
+				playerNameText.setFill(Color.valueOf("#CCCCCC"));
 				break;
 			}
 			case PLAYER_EMPTY:
 			{
-				tabField[newX][newY].setFill(Color.valueOf("#FFFFFF"));
+				playerNameText.setFill(Color.valueOf("#FFFFFF"));
 				break;
 			}
 			default:
 				break;
 
 		}
+	}
+	
+	public void movePawn(int oldX, int oldY, int newX, int newY, ColorPlayer movePlayer)
+	{
+		tabField[oldX][oldY].setFill(Color.valueOf("#FFFFFF"));
+		setBoardCircleColor(tabField[oldX][oldY], movePlayer);
 	}
 
 
@@ -648,48 +654,51 @@ public class GameScreen
 		k.setColorPlayer(colorPlayer);
 		k.setX(x);
 		k.setY(y);
+		setBoardCircleColor(k, colorPlayer);
+	}
 
+	private void setBoardCircleColor(BoardCircle boardCircle, ColorPlayer colorPlayer)
+	{
 		switch (colorPlayer)
 		{
 			case PLAYER_ONE:
 			{
-				k.setFill(Color.valueOf("#DFFF00"));
+				boardCircle.setFill(Color.valueOf("#DFFF00"));
 				break;
 			}
 			case PLAYER_TWO:
 			{
-				k.setFill(Color.valueOf("#FF00FF"));
+				boardCircle.setFill(Color.valueOf("#FF00FF"));
 				break;
 			}
 			case PLAYER_THREE:
 			{
-				k.setFill(Color.valueOf("#00FFFF"));
+				boardCircle.setFill(Color.valueOf("#00FFFF"));
 				break;
 			}
 			case PLAYER_FOUR:
 			{
-				k.setFill(Color.valueOf("#AFAFAF"));
+				boardCircle.setFill(Color.valueOf("#AFAFAF"));
 				break;
 			}
 			case PLAYER_FIVE:
 			{
-				k.setFill(Color.valueOf("#CAFAFA"));
+				boardCircle.setFill(Color.valueOf("#CAFAFA"));
 				break;
 			}
 			case PLAYER_SIX:
 			{
-				k.setFill(Color.valueOf("#CCCCCC"));
+				boardCircle.setFill(Color.valueOf("#CCCCCC"));
 				break;
 			}
 			case PLAYER_EMPTY:
 			{
-				k.setFill(Color.valueOf("#FFFFFF"));
+				boardCircle.setFill(Color.valueOf("#FFFFFF"));
 				break;
 			}
 			default:
 				break;
 
 		}
-
 	}
 }
