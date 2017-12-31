@@ -306,7 +306,7 @@ public class GameScreen
 		});
 
 		stack.setSpacing(8);
-		stack.getChildren().addAll(startGameButton, endRoundButton);
+		stack.getChildren().addAll(endRoundButton, startGameButton);
 		stack.setAlignment(Pos.CENTER_RIGHT);     // Right-justify nodes in stack
 		StackPane.setMargin(startGameButton, new Insets(0, 10, 0, 0)); // Center "?"
 
@@ -528,7 +528,7 @@ public class GameScreen
 	public void movePawn(int oldX, int oldY, int newX, int newY, ColorPlayer movePlayer)
 	{
 		tabField[oldX][oldY].setFill(Color.valueOf("#FFFFFF"));
-		setBoardCircleColor(tabField[oldX][oldY], movePlayer);
+		setBoardCircleColor(tabField[newX][newY], movePlayer);
 	}
 
 
