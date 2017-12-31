@@ -62,14 +62,33 @@ public class ServerListener implements Runnable
 				else if(tmp instanceof MoveMessage)
 				{
 					MoveMessage movePawn = (MoveMessage) tmp;
-					int oldX, oldY, newX, newY;
-					oldX = movePawn.getOldX();
-					oldY = movePawn.getOldY();
-					newX = movePawn.getNewX();
-					newY = movePawn.getNewY();
-					ColorPlayer movePlayer = movePawn.getMovePlayer();
 					
-					game.movePawn(oldX, oldY, newX, newY, movePlayer);
+					ColorPlayer nextMovePlayer;
+					String nameNextPlayer;
+					
+					if(movePawn.getEndTurn())
+					{
+						nextMovePlayer = movePawn.getNextMovePlayer();
+						nameNextPlayer = movePawn.getNextTurnPlayerName();
+						
+						game.getPlayerNameColored(nameNextPlayer, nextMovePlayer);
+					}
+					else
+					{
+						int oldX, oldY, newX, newY;
+						oldX = movePawn.getOldX();
+						oldY = movePawn.getOldY();
+						newX = movePawn.getNewX();
+						newY = movePawn.getNewY();
+						ColorPlayer movePlayer = movePawn.getMovePlayer();
+					
+						game.movePawn(oldX, oldY, newX, newY, movePlayer);
+						
+						nextMovePlayer = movePawn.getNextMovePlayer();
+						nameNextPlayer = movePawn.getNextTurnPlayerName();
+						
+						game.getPlayerNameColored(nameNextPlayer, nextMovePlayer);
+					}
 				}
 				
 			}

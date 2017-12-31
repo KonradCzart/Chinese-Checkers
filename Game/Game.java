@@ -46,6 +46,12 @@ public class Game
 
 	}
 	
+	public ColorPlayer getQueuePlayer()
+	{
+		ColorPlayer queuePlayer = ColorPlayer.values()[currentPlayer];
+		return queuePlayer;
+	}
+	
 	public void move(ColorPlayer movePlayer, int oldX, int oldY, int newX, int newY) throws BadPlayerException, IncorrectMoveException
 	{
 		Pawn currentPawn = null;

@@ -480,7 +480,8 @@ public class GameScreen
 
 	public void getPlayerNameColored(String name, ColorPlayer colorPlayer)
 	{
-		playerNameText.setText(name);
+		String line = "Now round: " + name;
+		playerNameText.setText(line);
 
 		switch (colorPlayer)
 		{

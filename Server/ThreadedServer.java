@@ -197,6 +197,20 @@ public class ThreadedServer implements Runnable {
 			
 		}
 		
+		public void sendMessageToGame(Message newMessage) throws IOException
+		{
+			for (ClientHandler tmp : client)
+			{
+				ObjectOutputStream outS;
+				outS = tmp.getObjectOutputStream();
+				
+				if(tmp.getGameID() == this.gameID)
+				{
+					outS.writeObject(newMessage);
+				}
+			}
+		}
+		
 		@Override
 		public void run() {
 			
@@ -214,18 +228,11 @@ public class ThreadedServer implements Runnable {
 					{
 						ChatMessage chatMessage = (ChatMessage) objectMessage;
 						String line = chatMessage.getDescription();
+						
+						String line2 = name + ": " + line;
+						ChatMessage newMessage = new ChatMessage(line2);
 
-						for (ClientHandler tmp : client)
-						{
-							if(tmp.getGameID() == this.gameID)
-							{
-								String line2 = name + ": " + line;
-								ObjectOutputStream outS;
-								outS = tmp.getObjectOutputStream();
-								ChatMessage newMessage = new ChatMessage(line2);
-								outS.writeObject(newMessage);
-							}
-						}
+						this.sendMessageToGame(newMessage);
 					}
 					else if(objectMessage instanceof NewNameMessage)
 					{
@@ -291,17 +298,10 @@ public class ThreadedServer implements Runnable {
 								SuccessMessage newMessage = new SuccessMessage(2567, line);
 								outStream.writeObject(newMessage);
 								
-								for (ClientHandler tmp : client)
-								{
-									if(tmp.getGameID() == this.gameID)
-									{
-										String line2 = name + ": Join to game :" + gameID;
-										ObjectOutputStream outS;
-										outS = tmp.getObjectOutputStream();
-										ChatMessage newMessage2 = new ChatMessage(line2);
-										outS.writeObject(newMessage2);
-									}
-								}
+								String line2 = name + ": Join to game :" + gameID;
+								ChatMessage newMessage2 = new ChatMessage(line2);
+								
+								this.sendMessageToGame(newMessage2);
 							}
 							else
 							{
@@ -313,11 +313,31 @@ public class ThreadedServer implements Runnable {
 					else if(objectMessage instanceof MoveMessage)
 					{
 						MoveMessage newMove = (MoveMessage) objectMessage;
+						MoveMessage okMove = null;
+						ColorPlayer nextColorPlayer = null;
+						String nextNamePlayer = "";
+						
 						if(newMove.getEndTurn())
 						{
 							try 
 							{
 								myGame.endMove(myPlayer);
+								nextColorPlayer = myGame.getQueuePlayer();
+								
+								for (ClientHandler tmp : client)
+								{
+									
+									if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextColorPlayer)
+									{
+										nextNamePlayer = tmp.getName();
+										break;
+									}
+								}
+								
+								okMove = new MoveMessage(true, nextColorPlayer, myPlayer, nextNamePlayer);
+								
+								this.sendMessageToGame(okMove);
+								
 							} catch (BadPlayerException e) 
 							{
 								// TODO Auto-generated catch block for later
@@ -332,18 +352,22 @@ public class ThreadedServer implements Runnable {
 							
 							try {
 								myGame.move(myPlayer, oldX, oldY, newX, newY);
-								MoveMessage okMove = new MoveMessage(oldX, oldY, newX, newY, myPlayer);
+								
+								nextColorPlayer = myGame.getQueuePlayer();
 								
 								for (ClientHandler tmp : client)
 								{
-									ObjectOutputStream outS;
-									outS = tmp.getObjectOutputStream();
 									
-									if(tmp.getGameID() == this.gameID)
+									if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextColorPlayer)
 									{
-										outS.writeObject(okMove);
+										nextNamePlayer = tmp.getName();
+										break;
 									}
 								}
+								okMove = new MoveMessage(oldX, oldY, newX, newY,nextColorPlayer, myPlayer, nextNamePlayer);
+								
+								this.sendMessageToGame(okMove);
+								
 							} catch (BadPlayerException e) {
 								FailMessage newFail = new FailMessage(1235,"Bad Player!");
 								outStream.writeObject(newFail);
@@ -352,6 +376,7 @@ public class ThreadedServer implements Runnable {
 								outStream.writeObject(newFail);
 							}
 						}
+						
 						
 					}
 					else if(objectMessage instanceof SuccessMessage)
@@ -377,6 +402,23 @@ public class ThreadedServer implements Runnable {
 										}
 									}
 								}
+								
+								ColorPlayer nextColorPlayer = myGame.getQueuePlayer();
+								String nextNamePlayer = "";
+								
+								for (ClientHandler tmp : client)
+								{
+									
+									if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextColorPlayer)
+									{
+										nextNamePlayer = tmp.getName();
+										break;
+									}
+								}
+								
+								MoveMessage okMove = new MoveMessage(true, nextColorPlayer, myPlayer, nextNamePlayer);
+								
+								this.sendMessageToGame(okMove);
 							}
 						}
 					}
@@ -386,6 +428,7 @@ public class ThreadedServer implements Runnable {
 			} 
 			catch (IOException e) 
 			{
+				client.remove(this);
 				System.out.println("fail server 1");
 			} catch (ClassNotFoundException e) {
 				System.out.println("fail server 2");

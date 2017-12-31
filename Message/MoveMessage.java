@@ -15,9 +15,9 @@ public class MoveMessage implements Message
 	private int newX;
 	private int newY;
 	private Boolean endTurn;
-	private String nextTurnPlayer;
+	private String nextTurnPlayerName;
 	private ColorPlayer movePlayer;
-	
+	private ColorPlayer nextMovePlayer;
 	
 
 	public MoveMessage(int oldX, int oldY, int newX, int newY)
@@ -29,7 +29,7 @@ public class MoveMessage implements Message
 		endTurn = false;
 	}
 	
-	public MoveMessage(int oldX, int oldY, int newX, int newY, ColorPlayer movePlayer)
+	public MoveMessage(int oldX, int oldY, int newX, int newY, ColorPlayer nextMovePlayer, ColorPlayer movePlayer, String name)
 	{
 		this.oldX = oldX;
 		this.oldY = oldY;
@@ -37,7 +37,8 @@ public class MoveMessage implements Message
 		this.newY = newY;
 		endTurn = false;
 		this.movePlayer = movePlayer;
-		this.nextTurnPlayer = "";
+		this.nextMovePlayer = nextMovePlayer;
+		this.nextTurnPlayerName = name;
 	}
 	
 	public MoveMessage(Boolean endTurn)
@@ -48,10 +49,10 @@ public class MoveMessage implements Message
 		this.newX = 0;
 		this.newY = 0;
 		this.movePlayer = ColorPlayer.PLAYER_EMPTY;
-		this.nextTurnPlayer = "";
+		this.nextTurnPlayerName = "";
 	}
 	
-	public MoveMessage(Boolean endTurn, ColorPlayer movePlayer, String name)
+	public MoveMessage(Boolean endTurn, ColorPlayer nextMovePlayer, ColorPlayer movePlayer, String name)
 	{
 		this.endTurn = endTurn;
 		this.oldX = 0;
@@ -59,7 +60,8 @@ public class MoveMessage implements Message
 		this.newX = 0;
 		this.newY = 0;
 		this.movePlayer = movePlayer;
-		this.nextTurnPlayer = name;
+		this.nextTurnPlayerName = name;
+		this.nextMovePlayer = nextMovePlayer;
 	}
 	
 	public int getOldX() 
@@ -93,12 +95,12 @@ public class MoveMessage implements Message
 		return endTurn;
 	}	
 	
-	public String getNextTurnPlayer() {
-		return nextTurnPlayer;
+	public String getNextTurnPlayerName() {
+		return nextTurnPlayerName;
 	}
 
-	public void setNextTurnPlayer(String nextTurnPlayer) {
-		this.nextTurnPlayer = nextTurnPlayer;
+	public void setNextTurnPlayerName(String nextTurnPlayer) {
+		this.nextTurnPlayerName = nextTurnPlayer;
 	}
 	
 	public void setMovePlayer(ColorPlayer movePlayer)
@@ -109,6 +111,11 @@ public class MoveMessage implements Message
 	public ColorPlayer getMovePlayer()
 	{
 		return movePlayer;
+	}
+	
+	public ColorPlayer getNextMovePlayer()
+	{
+		return nextMovePlayer;
 	}
 
 }
