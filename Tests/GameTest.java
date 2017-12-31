@@ -33,15 +33,15 @@ public class GameTest {
 	}
 	@Test
 	public void testMoveValidate() {
-		assertTrue(myGame.moveValidate(4, 10, 5, 9));
-		assertTrue(myGame.moveValidate(4, 10, 5, 10));
+		assertTrue(myGame.moveValidate(4, 10, 5, 9, false));
+		assertTrue(myGame.moveValidate(4, 10, 5, 10, false));
 		
-		assertTrue(myGame.moveValidate(7, 6, 8, 6));
-		assertTrue(myGame.moveValidate(7, 6, 7, 7));
+		assertTrue(myGame.moveValidate(7, 6, 8, 6, false));
+		assertTrue(myGame.moveValidate(7, 6, 7, 7, false));
 		
-		assertFalse(myGame.moveValidate(7, 6, 8, 7));
-		assertFalse(myGame.moveValidate(14, 6, 13, 5));
-		assertFalse(myGame.moveValidate(8, 14, 7, 13));
+		assertFalse(myGame.moveValidate(7, 6, 8, 7, false));
+		assertFalse(myGame.moveValidate(14, 6, 13, 5, false));
+		assertFalse(myGame.moveValidate(8, 14, 7, 13, false));
 	}
 	
 	@Test
@@ -72,7 +72,7 @@ public class GameTest {
 			myGame.move(ColorPlayer.PLAYER_TWO, 14, 5, 13, 5);
 			myGame.move(ColorPlayer.PLAYER_THREE, 5, 14, 5, 13);
 			myGame.move(ColorPlayer.PLAYER_ONE, 4, 11, 6, 9);
-			myGame.move(ColorPlayer.PLAYER_ONE, 3, 11, 4, 11);
+			//myGame.move(ColorPlayer.PLAYER_ONE, 3, 11, 4, 11);
 		} catch (BadPlayerException e) {
 			fail();
 		} catch (IncorrectMoveException e) {
