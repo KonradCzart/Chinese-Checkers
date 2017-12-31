@@ -37,6 +37,7 @@ public class MoveMessage implements Message
 		this.newY = newY;
 		endTurn = false;
 		this.movePlayer = movePlayer;
+		this.nextTurnPlayer = "";
 	}
 	
 	public MoveMessage(Boolean endTurn)
@@ -46,6 +47,19 @@ public class MoveMessage implements Message
 		this.oldY = 0;
 		this.newX = 0;
 		this.newY = 0;
+		this.movePlayer = ColorPlayer.PLAYER_EMPTY;
+		this.nextTurnPlayer = "";
+	}
+	
+	public MoveMessage(Boolean endTurn, ColorPlayer movePlayer, String name)
+	{
+		this.endTurn = endTurn;
+		this.oldX = 0;
+		this.oldY = 0;
+		this.newX = 0;
+		this.newY = 0;
+		this.movePlayer = movePlayer;
+		this.nextTurnPlayer = name;
 	}
 	
 	public int getOldX() 

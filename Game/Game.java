@@ -11,7 +11,8 @@ public class Game
 	private Boolean start;
 	private int id;
 	private Boolean endTurn;
-	private Pawn currentPawn;
+	private Pawn lastMovePawn;
+	
 	
 	private ArrayList<Pawn> tabPawn;
 	
@@ -22,7 +23,7 @@ public class Game
 		tabField = new Field[19][19];
 		tabPawn = new ArrayList<Pawn>();
 		endTurn = false;
-		currentPawn = null;
+		lastMovePawn = null;
 		createBoard();
 		start = false;
 	}
@@ -40,30 +41,35 @@ public class Game
 			throw new BadPlayerException();
 		
 		currentPlayer = (currentPlayer + 1) % countPlayer;
-		currentPawn = null;
+		
+		lastMovePawn = null;
+
 	}
 	
 	public void move(ColorPlayer movePlayer, int oldX, int oldY, int newX, int newY) throws BadPlayerException, IncorrectMoveException
 	{
-		
+		Pawn currentPawn = null;
 		Boolean isPawn = false;
 		Boolean correctMove;
 		int pawnX = -10;
 		int pawnY = -10;
+		Boolean specialValidata = false;
 		
 		ColorPlayer queuePlayer = ColorPlayer.values()[currentPlayer];
 		
 		if(movePlayer != queuePlayer)
 			throw new BadPlayerException();
 		
-		if(currentPawn != null)
+		if(lastMovePawn != null)
 		{
+			currentPawn = lastMovePawn;
 			pawnX = currentPawn.getX();
 			pawnY = currentPawn.getY();
 			
 			if(oldX == pawnX && oldY == pawnY)
 			{
 				isPawn = true;
+				specialValidata = true;
 			}
 		}
 		else
@@ -88,7 +94,7 @@ public class Game
 		if(currentPawn.getPlayer() != movePlayer)
 				throw new BadPlayerException();
 		
-		correctMove = this.moveValidate(pawnX, pawnY, newX, newY);
+		correctMove = this.moveValidate(pawnX, pawnY, newX, newY, specialValidata);
 		
 		if(!correctMove)
 			throw new IncorrectMoveException();
@@ -102,6 +108,8 @@ public class Game
 			
 			if(endTurn)
 				this.endMove(movePlayer);
+			else
+				lastMovePawn = currentPawn;
 			
 		}
 		
@@ -179,7 +187,7 @@ public class Game
 
 	}
 	
-	public Boolean moveValidate(int oldX, int oldY, int newX, int newY)
+	public Boolean moveValidate(int oldX, int oldY, int newX, int newY, Boolean special)
 	{
 		int tmpX;
 		int tmpY;
@@ -200,7 +208,7 @@ public class Game
 		tmpY = oldY + 1;
 		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
 		
-		if(tmpX == newX && tmpY == newY)
+		if(tmpX == newX && tmpY == newY && !special)
 			return true;
 		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
@@ -220,7 +228,7 @@ public class Game
 		tmpY = oldY + 1;
 		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
 			
-		if(tmpX == newX && tmpY == newY)
+		if(tmpX == newX && tmpY == newY && !special)
 			return true;
 		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
@@ -240,7 +248,7 @@ public class Game
 		tmpY = oldY ;
 		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
 			
-		if(tmpX == newX && tmpY == newY)
+		if(tmpX == newX && tmpY == newY && !special)
 			return true;
 		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
@@ -260,7 +268,7 @@ public class Game
 		tmpY = oldY -1;
 		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
 			
-		if(tmpX == newX && tmpY == newY)
+		if(tmpX == newX && tmpY == newY && !special) 
 			return true;
 		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
@@ -279,7 +287,7 @@ public class Game
 		tmpY = oldY - 1;
 		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
 			
-		if(tmpX == newX && tmpY == newY)
+		if(tmpX == newX && tmpY == newY && !special)
 			return true;
 		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
@@ -299,7 +307,7 @@ public class Game
 		tmpY = oldY;
 		tmpStatus = tabField[tmpX][tmpY].getFieldStatus();
 			
-		if(tmpX == newX && tmpY == newY)
+		if(tmpX == newX && tmpY == newY && !special)
 			return true;
 		else if(tmpStatus == FieldStatus.UNAVAILABLE )
 		{
