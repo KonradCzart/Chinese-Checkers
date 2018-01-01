@@ -119,6 +119,13 @@ public class ThreadedServer implements Runnable {
 			
 		}
 		
+		public void exitGame()
+		{
+			gameID = 0;
+			myPlayer = ColorPlayer.PLAYER_EMPTY;
+			myGame = null;
+		}
+		
 		public ColorPlayer getMyplayer()
 		{
 			return myPlayer;
@@ -143,6 +150,8 @@ public class ThreadedServer implements Runnable {
 		{
 			return name;
 		}
+		
+		
 
 		@Override
 		public String toString()
@@ -310,7 +319,7 @@ public class ThreadedServer implements Runnable {
 							}
 						}
 					}
-					else if(objectMessage instanceof MoveMessage)
+					else if(objectMessage instanceof MoveMessage && myGame != null)
 					{
 						MoveMessage newMove = (MoveMessage) objectMessage;
 						MoveMessage okMove = null;
@@ -402,7 +411,6 @@ public class ThreadedServer implements Runnable {
 										}
 									}
 								}
-								
 								ColorPlayer nextColorPlayer = myGame.getQueuePlayer();
 								String nextNamePlayer = "";
 								
@@ -419,7 +427,29 @@ public class ThreadedServer implements Runnable {
 								MoveMessage okMove = new MoveMessage(true, nextColorPlayer, myPlayer, nextNamePlayer);
 								
 								this.sendMessageToGame(okMove);
+								
 							}
+						}
+						else if(succes.getCodSuccess() == 22222)
+						{
+							if(myGame != null)
+							{
+								tabGame.remove(myGame);
+								String line = "The game about id: " +gameID + "  has been turned off";
+								ChatMessage newMessage = new ChatMessage(line);
+								SuccessMessage newSuccess = new SuccessMessage(22222, "remove game");
+								this.sendMessageToGame(newSuccess);
+								this.sendMessageToGame(newMessage);
+								
+								for (ClientHandler tmp : client)
+								{
+									if(tmp.getGameID() == this.gameID)
+									{
+										tmp.exitGame();
+									}
+								}
+							}
+							
 						}
 					}
 
@@ -429,7 +459,7 @@ public class ThreadedServer implements Runnable {
 			catch (IOException e) 
 			{
 				client.remove(this);
-				System.out.println("fail server 1");
+				System.out.println("client disconnected");
 			} catch (ClassNotFoundException e) {
 				System.out.println("fail server 2");
 			}			

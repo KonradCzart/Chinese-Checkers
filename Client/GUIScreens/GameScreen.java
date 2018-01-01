@@ -47,6 +47,7 @@ public class GameScreen
 	private Paint lastClickedColor;
 	private Text playerNameText;
 	private boolean isChatCreated;
+	private BorderPane border;
 
 	GameScreen(String playerName, Stage stage, Client myClient)
 	{
@@ -72,7 +73,7 @@ public class GameScreen
 
 	private void load()
 	{
-		BorderPane border = new BorderPane();
+		border = new BorderPane();
 
 		MenuBar menuBar = new MenuBar();
 		Menu menuFile = new Menu("File");
@@ -93,6 +94,19 @@ public class GameScreen
 		joinGame.setOnAction(event ->
 		{
 			gameIdDialog();
+		});
+		
+		MenuItem removeGame = new MenuItem(("Remove game"));
+		removeGame.setOnAction(event ->
+		{
+			SuccessMessage newMessage = new SuccessMessage(22222, "remove game");
+			try {
+				myClient.sendMessage(newMessage);
+			} catch (IOException e) {
+				
+			}
+			
+			//this.paintBoard(grid);
 		});
 		
 		MenuItem setName = new MenuItem(("Set name"));
@@ -135,7 +149,7 @@ public class GameScreen
 		MenuItem exit = new MenuItem("Exit");
 		exit.setOnAction(t -> System.exit(0));
 
-		menuFile.getItems().addAll(joinGame, createGame, changeServer, setName, new SeparatorMenuItem(), exit);
+		menuFile.getItems().addAll(joinGame, createGame, changeServer, setName, new SeparatorMenuItem(),removeGame, exit);
 		menuBar.getMenus().addAll(menuFile, menuInfo);
 
 		hbox.getChildren().add(menuBar);
@@ -166,7 +180,15 @@ public class GameScreen
 		return hbox;
 	}
 
-	
+	public void removeGame()
+	{
+		
+		Platform.runLater(() -> {
+			this.createBoard();
+			border.setCenter(addBoardPane());
+		});
+
+	}
 	public void errorDialog(String errorMessage)
 	{
 		

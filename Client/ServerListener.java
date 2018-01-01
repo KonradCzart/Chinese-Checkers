@@ -50,9 +50,18 @@ public class ServerListener implements Runnable
 				}
 				else if(tmp instanceof SuccessMessage)
 				{
+					
 					SuccessMessage success = (SuccessMessage) tmp;
-					String line = success.getDescription();
-					game.successDialog(line);
+					
+					if(success.getCodSuccess() == 22222)
+					{
+						game.removeGame();
+					}
+					else
+					{
+						String line = success.getDescription();
+						game.successDialog(line);
+					}
 				}
 				else if(tmp instanceof AddPawnMessage)
 				{
