@@ -16,8 +16,11 @@ import java.util.Optional;
  */
 public class ChangeServer
 {
+	private Stage stage;
+
 	public ChangeServer(Stage stage)
 	{
+		this.stage = stage;
 		// Create the custom dialog.
 		Dialog<Pair<String, String>> dialog = new Dialog<>();
 		dialog.setTitle("Connect to server");
@@ -73,17 +76,27 @@ public class ChangeServer
 			try
 			{
 				portData = Integer.parseInt(connectionData.getValue());
-				new LoadingScreen(stage, connectionData.getKey(), portData);
-			}
-			catch (NumberFormatException e) {
-				Alert alert = new Alert(Alert.AlertType.ERROR);
-				alert.setTitle("Error");
-				alert.setHeaderText("");
-				alert.setContentText("Bad port syntax..");
 
-				alert.showAndWait();
-				new ChangeServer(stage);
+				if(portData > 0 && portData <= 65535)
+					new LoadingScreen(stage, connectionData.getKey(), portData);
+				else
+					badPortValue();
+			}
+			catch (NumberFormatException e)
+			{
+				badPortValue();
 			}
 		});
+	}
+
+	private void badPortValue()
+	{
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle("Error");
+		alert.setHeaderText("");
+		alert.setContentText("Bad port syntax..");
+
+		alert.showAndWait();
+		new ChangeServer(stage);
 	}
 }
