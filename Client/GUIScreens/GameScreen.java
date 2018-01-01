@@ -47,6 +47,7 @@ public class GameScreen
 	private Paint lastClickedColor;
 	private Text playerNameText;
 	private boolean isChatCreated;
+	private boolean arePawnsAdded;
 	private BorderPane border;
 
 	GameScreen(String playerName, Stage stage, Client myClient)
@@ -64,6 +65,7 @@ public class GameScreen
 
 		Platform.setImplicitExit(false);
 		isChatCreated = false;
+		arePawnsAdded = false;
 		hbox = new HBox();
 		tabField = new BoardCircle[19][19];
 		createBoard();
@@ -461,42 +463,45 @@ public class GameScreen
 
 	private void onBoardCircleClick(BoardCircle circle)
 	{
-		if(clickedBoardCircle == null)
+		if(arePawnsAdded)
 		{
-			clickedBoardCircle = circle;
-			lastClickedColor = clickedBoardCircle.getFill();
-			clickedBoardCircle.setFill(Color.valueOf("#333333"));
-		}
-		else if(clickedBoardCircle == circle)
-		{
-			clickedBoardCircle.setFill(lastClickedColor);
-			clickedBoardCircle = null;
-		}
-		else
-		{
-			// JESLI POLE JEST PIONKIEM TO WTEDY MOZNA TU COS ZROBIC
-			// Czekaj na potwierdznie ruchu i wtedy rusz ten pionek tam..
+			if(clickedBoardCircle == null)
+			{
+				clickedBoardCircle = circle;
+				lastClickedColor = clickedBoardCircle.getFill();
+				clickedBoardCircle.setFill(Color.valueOf("#333333"));
+			}
+			else if(clickedBoardCircle == circle)
+			{
+				clickedBoardCircle.setFill(lastClickedColor);
+				clickedBoardCircle = null;
+			}
+			else
+			{
+				// JESLI POLE JEST PIONKIEM TO WTEDY MOZNA TU COS ZROBIC
+				// Czekaj na potwierdznie ruchu i wtedy rusz ten pionek tam..
 //			move(clickedBoardCircle, circle);
 
-			// jesli metoda move pozwoli to rusz
-			//circle.setFill(lastClickedColor);
-			clickedBoardCircle.setFill(lastClickedColor);
-			int oldX, oldY, newX, newY;
-			oldX = clickedBoardCircle.getX();
-			oldY = clickedBoardCircle.getY();
-			newX = circle.getX();
-			newY = circle.getY();
-			
-			//this.movePawn(oldX, oldY, newX, newY);
-			
-			MoveMessage newMessage = new MoveMessage(oldX, oldY, newX, newY);
-			try {
-				myClient.sendMessage(newMessage);
-			} catch (IOException e) {
-				
+				// jesli metoda move pozwoli to rusz
+				//circle.setFill(lastClickedColor);
+				clickedBoardCircle.setFill(lastClickedColor);
+				int oldX, oldY, newX, newY;
+				oldX = clickedBoardCircle.getX();
+				oldY = clickedBoardCircle.getY();
+				newX = circle.getX();
+				newY = circle.getY();
+
+				//this.movePawn(oldX, oldY, newX, newY);
+
+				MoveMessage newMessage = new MoveMessage(oldX, oldY, newX, newY);
+				try {
+					myClient.sendMessage(newMessage);
+				} catch (IOException e) {
+
+				}
+
+				clickedBoardCircle = null;
 			}
-			
-			clickedBoardCircle = null;
 		}
 	}
 
@@ -678,6 +683,7 @@ public class GameScreen
 		k.setX(x);
 		k.setY(y);
 		setBoardCircleColor(k, colorPlayer);
+		arePawnsAdded = true;
 	}
 
 	private void setBoardCircleColor(BoardCircle boardCircle, ColorPlayer colorPlayer)
