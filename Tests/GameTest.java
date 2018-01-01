@@ -10,6 +10,7 @@ import Game.BadPlayerException;
 import Game.ColorPlayer;
 import Game.Game;
 import Game.IncorrectMoveException;
+import Game.Zone;
 
 public class GameTest {
 
@@ -47,38 +48,25 @@ public class GameTest {
 	@Test
 	public void testMove()
 	{
-		
-		try {
-			myGame.move(ColorPlayer.PLAYER_ONE, 4, 10, 5, 10);
-			//myGame.move(ColorPlayer.PLAYER_ONE, 4, 11, 6, 9);
-		} catch (BadPlayerException e) {
-			fail();
-		} catch (IncorrectMoveException e) {
-			fail();
-		}
+//		
+//		try {
+//			myGame.move(ColorPlayer.PLAYER_ONE, 4, 10, 5, 10);
+//			myGame.move(ColorPlayer.PLAYER_ONE, 4, 11, 6, 9);
+//		} catch (BadPlayerException e) {
+//			fail();
+//		} catch (IncorrectMoveException e) {
+//			fail();
+//		}
 	}
+	
 	@Test
-	public void testMoveQueue()
+	public void testPawnInZone()
 	{
-		try {
-			myGame.move(ColorPlayer.PLAYER_TWO, 14, 5, 13, 5);
-			fail();
-		} catch (BadPlayerException e) {
-		} catch (IncorrectMoveException e) {
-		}
-		
-		try {
-			myGame.move(ColorPlayer.PLAYER_ONE, 4, 10, 5, 10);
-			myGame.move(ColorPlayer.PLAYER_TWO, 14, 5, 13, 5);
-			myGame.move(ColorPlayer.PLAYER_THREE, 5, 14, 5, 13);
-			myGame.move(ColorPlayer.PLAYER_ONE, 4, 11, 6, 9);
-			//myGame.move(ColorPlayer.PLAYER_ONE, 3, 11, 4, 11);
-		} catch (BadPlayerException e) {
-			fail();
-		} catch (IncorrectMoveException e) {
-			fail();
-		}
-
+		assertTrue(myGame.pawnInZone(ColorPlayer.PLAYER_ONE, Zone.ZONE_ONE, 10));
+		assertTrue(myGame.pawnInZone(ColorPlayer.PLAYER_TWO, Zone.ZONE_TWO, 10));
+		assertTrue(myGame.pawnInZone(ColorPlayer.PLAYER_FOUR, Zone.ZONE_FOUR, 10));
 	}
+	
+
 
 }

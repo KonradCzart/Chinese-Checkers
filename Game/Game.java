@@ -1,6 +1,9 @@
 package Game;
 
 import java.util.ArrayList;
+import java.util.Random;
+
+import javafx.scene.paint.Color;
 
 
 public class Game 
@@ -12,7 +15,8 @@ public class Game
 	private int id;
 	private Boolean endTurn;
 	private Pawn lastMovePawn;
-	
+	private ArrayList<ColorPlayer> winPlayer;
+	private ArrayList<ColorPlayer> queuePlayerTab;
 	
 	private ArrayList<Pawn> tabPawn;
 	
@@ -22,6 +26,8 @@ public class Game
 		currentPlayer = 0;
 		tabField = new Field[19][19];
 		tabPawn = new ArrayList<Pawn>();
+		winPlayer = new ArrayList<ColorPlayer>();
+		queuePlayerTab = new ArrayList<ColorPlayer>();
 		endTurn = false;
 		lastMovePawn = null;
 		createBoard();
@@ -32,15 +38,91 @@ public class Game
 	{
 		return tabPawn;
 	}
+	public Boolean winPlayer(ColorPlayer player)
+	{
+		Boolean win = false;
+		switch (player)
+		{
+			case PLAYER_ONE:
+			{
+				win = this.pawnInZone(ColorPlayer.PLAYER_ONE, Zone.ZONE_FOUR, 10);
+				break;
+			}
+			case PLAYER_TWO:
+			{
+				win = this.pawnInZone(ColorPlayer.PLAYER_TWO, Zone.ZONE_FIVE, 10);
+				break;
+			}
+			case PLAYER_THREE:
+			{
+				win = this.pawnInZone(ColorPlayer.PLAYER_THREE, Zone.ZONE_SIX, 10);
+				break;
+			}
+			case PLAYER_FOUR:
+			{
+				win = this.pawnInZone(ColorPlayer.PLAYER_FOUR, Zone.ZONE_ONE, 10);
+				break;
+			}
+			case PLAYER_FIVE:
+			{
+				win = this.pawnInZone(ColorPlayer.PLAYER_FIVE, Zone.ZONE_TWO, 10);
+				break;
+			}
+			case PLAYER_SIX:
+			{
+				win = this.pawnInZone(ColorPlayer.PLAYER_SIX, Zone.ZONE_THREE, 10);
+				break;
+			}
+			default:
+				break;
+
+		}
+		
+		return win;
+	}
+	public Boolean pawnInZone(ColorPlayer player, Zone zone,int number)
+	{
+		int count = 0;
+		ColorPlayer currentPlayer;
+		Zone currentZone;
+		int x;
+		int y;
+		
+		for(Pawn tmp : tabPawn)
+		{
+			currentPlayer = tmp.getPlayer();
+			x = tmp.getX();
+			y = tmp.getY();
+			currentZone = tabField[x][y].getZone();
+			
+			if(player == currentPlayer && zone == currentZone)
+				count++;
+		}
+		
+		if(count == number)
+			return true;
+		else
+			return false;
+	}
 	
 	public void endMove(ColorPlayer movePlayer) throws BadPlayerException
 	{
-		ColorPlayer queuePlayer = ColorPlayer.values()[currentPlayer];
+		ColorPlayer queuePlayer = queuePlayerTab.get(currentPlayer);
 		
 		if(movePlayer != queuePlayer)
 			throw new BadPlayerException();
 		
 		currentPlayer = (currentPlayer + 1) % countPlayer;
+		
+		ColorPlayer nextPlayer = queuePlayerTab.get(currentPlayer);
+		
+		while(winPlayer.contains(nextPlayer))
+		{
+			currentPlayer = (currentPlayer + 1) % countPlayer;
+			nextPlayer = queuePlayerTab.get(currentPlayer);
+		}
+		
+		
 		
 		lastMovePawn = null;
 		endTurn = false;
@@ -49,12 +131,13 @@ public class Game
 	
 	public ColorPlayer getQueuePlayer()
 	{
-		ColorPlayer queuePlayer = ColorPlayer.values()[currentPlayer];
-		return queuePlayer;
+		ColorPlayer queue = queuePlayerTab.get(currentPlayer);
+		return queue;
 	}
 	
 	public void move(ColorPlayer movePlayer, int oldX, int oldY, int newX, int newY) throws BadPlayerException, IncorrectMoveException
 	{
+
 		Pawn currentPawn = null;
 		Boolean isPawn = false;
 		Boolean correctMove;
@@ -62,7 +145,7 @@ public class Game
 		int pawnY = -10;
 		Boolean specialValidata = false;
 		
-		ColorPlayer queuePlayer = ColorPlayer.values()[currentPlayer];
+		ColorPlayer queuePlayer = queuePlayerTab.get(currentPlayer);
 		
 		if(movePlayer != queuePlayer)
 			throw new BadPlayerException();
@@ -118,8 +201,11 @@ public class Game
 			
 			if(!endTurn)
 				lastMovePawn = currentPawn;
-				//this.endMove(movePlayer);
-			//else
+				
+			Boolean win = this.winPlayer(movePlayer);
+			
+			if(win)
+				winPlayer.add(movePlayer);
 				
 			
 		}
@@ -134,7 +220,13 @@ public class Game
 	
 	public void startGame()
 	{
+		
 		start = true;
+		queuePlayerTab.sort(null);
+		double x = Math.random();
+		int a = (int) (x * countPlayer);
+	
+		currentPlayer = a;
 	}
 	
 	public Boolean getStartStatus()
@@ -146,48 +238,67 @@ public class Game
 	{
 		if(!start)
 		{
+			ColorPlayer newPlayer;
 			if(countPlayer == 0)
 			{
-				addPawn(ColorPlayer.PLAYER_ONE, Zone.ZONE_ONE);
+				newPlayer = ColorPlayer.PLAYER_ONE;
+				addPawn(newPlayer, Zone.ZONE_ONE);
 				countPlayer++;
 				currentPlayer = 0;
-			
-				return ColorPlayer.PLAYER_ONE;
+				
+				queuePlayerTab.add(newPlayer);
+				return newPlayer;
 			}
 			else if(countPlayer == 1)
 			{
-				addPawn(ColorPlayer.PLAYER_TWO, Zone.ZONE_FOUR);
+				
+				newPlayer = ColorPlayer.PLAYER_FOUR;
+				
+				addPawn(newPlayer, Zone.ZONE_FOUR);
 				countPlayer++;
 			
-				return ColorPlayer.PLAYER_TWO;
+				queuePlayerTab.add(newPlayer);
+				return newPlayer;
 			}
 			else if(countPlayer == 2)
 			{
-				addPawn(ColorPlayer.PLAYER_THREE, Zone.ZONE_TWO);
+				newPlayer = ColorPlayer.PLAYER_TWO;
+				
+				addPawn(newPlayer, Zone.ZONE_TWO);
 				countPlayer++;
 			
-				return ColorPlayer.PLAYER_THREE;
+				queuePlayerTab.add(newPlayer);
+				return newPlayer;
 			}
 			else if(countPlayer == 3)
 			{
-				addPawn(ColorPlayer.PLAYER_FOUR, Zone.ZONE_FIVE);
+				newPlayer = ColorPlayer.PLAYER_FIVE;
+				
+				addPawn(newPlayer, Zone.ZONE_FIVE);
 				countPlayer++;
 			
-				return ColorPlayer.PLAYER_FOUR;
+				queuePlayerTab.add(newPlayer);
+				return newPlayer;
 			}
 			else if(countPlayer == 4)
 			{
-				addPawn(ColorPlayer.PLAYER_FIVE, Zone.ZONE_THREE);
+				newPlayer = ColorPlayer.PLAYER_THREE;
+				
+				addPawn(newPlayer, Zone.ZONE_THREE);
 				countPlayer++;
 			
-				return ColorPlayer.PLAYER_FIVE;
+				queuePlayerTab.add(newPlayer);
+				return newPlayer;
 			}
 			else if(countPlayer == 5)
 			{
-				addPawn(ColorPlayer.PLAYER_SIX, Zone.ZONE_SIX);
+				newPlayer = ColorPlayer.PLAYER_SIX;
+				
+				addPawn(newPlayer, Zone.ZONE_SIX);
 				countPlayer++;
 			
-				return ColorPlayer.PLAYER_SIX;
+				queuePlayerTab.add(newPlayer);
+				return newPlayer;
 			}
 			else
 				return ColorPlayer.PLAYER_EMPTY;
@@ -205,14 +316,19 @@ public class Game
 		endTurn = true;
 		
 		if(newX >= 19 || newX < 0 || newY >= 19 || newY < 0)
+		{
+			endTurn = false;
 			return false;
+		}
 		
 		FieldStatus newFieldStatus = tabField[newX][newY].getFieldStatus();
 		FieldStatus tmpStatus;
 		
 		if(newFieldStatus != FieldStatus.AVAILABLE)
+		{
+			endTurn = false;
 			return false;
-		
+		}
 		//upper right (1)
 		
 		tmpX = oldX - 1;
@@ -332,6 +448,7 @@ public class Game
 			}
 		}		
 		
+		endTurn = false;
 		return false;
 	}
 	

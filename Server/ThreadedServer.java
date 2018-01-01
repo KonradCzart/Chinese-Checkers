@@ -375,6 +375,13 @@ public class ThreadedServer implements Runnable {
 								}
 								okMove = new MoveMessage(oldX, oldY, newX, newY,nextColorPlayer, myPlayer, nextNamePlayer);
 								
+								if(myGame.winPlayer(myPlayer))
+								{
+									String winLine = name + ": won! congratulations :D";
+									ChatMessage newWinMessage = new ChatMessage(winLine);
+									this.sendMessageToGame(newWinMessage);
+								}
+								
 								this.sendMessageToGame(okMove);
 								
 							} catch (BadPlayerException e) {
