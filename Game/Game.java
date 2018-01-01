@@ -43,6 +43,7 @@ public class Game
 		currentPlayer = (currentPlayer + 1) % countPlayer;
 		
 		lastMovePawn = null;
+		endTurn = false;
 
 	}
 	
@@ -65,6 +66,9 @@ public class Game
 		
 		if(movePlayer != queuePlayer)
 			throw new BadPlayerException();
+		
+		if(endTurn)
+			throw new IncorrectMoveException();
 		
 		if(lastMovePawn != null)
 		{
@@ -112,10 +116,11 @@ public class Game
 			tabField[pawnX][pawnY].setFieldStatus(FieldStatus.AVAILABLE);
 			tabField[newX][newY].setFieldStatus(FieldStatus.UNAVAILABLE);
 			
-			if(endTurn)
-				this.endMove(movePlayer);
-			else
+			if(!endTurn)
 				lastMovePawn = currentPawn;
+				//this.endMove(movePlayer);
+			//else
+				
 			
 		}
 		
