@@ -175,7 +175,7 @@ public class GameScreen
 		hbox.setSpacing(10);
 		hbox.setStyle("-fx-background-color: #336699;");
 
-		playerNameText = new Text("Player");
+		playerNameText = new Text("");
 
 		hbox.getChildren().addAll(playerNameText);
 

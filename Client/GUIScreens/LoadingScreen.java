@@ -27,7 +27,7 @@ public class LoadingScreen
 	private Button btn;
 	private Button serverChangeButton;
 	private TextField userTextField;
-	private Text connectingText;
+	private Label connectingText;
 	private String playerName;
 	private String hostname;
 	private int port;
@@ -86,7 +86,10 @@ public class LoadingScreen
 		userTextField.setOnKeyPressed(event ->
 		{
 			if(event.getCode() == KeyCode.ENTER)
+			{
 				login();
+			}
+
 		});
 		grid.add(userTextField, 1, 4);
 
@@ -102,7 +105,7 @@ public class LoadingScreen
 		hbBtn.getChildren().addAll(serverChangeButton, btn);
 		grid.add(hbBtn, 1, 5);
 
-		connectingText = new Text();
+		connectingText = new Label();
 		grid.add(connectingText, 1, 9);
 		//grid.add(serverChangeButton, 1, 6);
 
@@ -118,24 +121,39 @@ public class LoadingScreen
 
 		if (name.matches("[\\w]+"))
 		{
-			connectingText.setFill(Color.GREEN);
-			connectingText.setText("Connecting...");
-			connectingText.isVisible();
-			playerName = name;
-
-			try
-			{
-				myClient.connectServer();
-				new GameScreen(playerName, stage, myClient);
-			}
-			catch (IOException e) {
-				connectingText.setFill(Color.RED);
-				connectingText.setText("Connection failed.");
-			}
-
+			Thread thread = new Thread(() -> {
+				try
+				{
+					Platform.runLater(() ->
+					{
+						connectingText.setTextFill(Color.GREEN);
+						connectingText.setText("Connecting...");
+					});
+					Thread.sleep(300);
+					Platform.runLater(() ->
+					{
+						playerName = name;
+						try
+						{
+							myClient.connectServer();
+							new GameScreen(playerName, stage, myClient);
+						} catch (IOException e) {
+							connectingText.setTextFill(Color.RED);
+							connectingText.setText("Connection failed.");
+						}
+					});
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			});
+			thread.start();
 		}
 		else
 		{
+			connectingText.setText("");
+
 			Alert alert = new Alert(Alert.AlertType.INFORMATION);
 			alert.setTitle("Error");
 			alert.setHeaderText(null);
