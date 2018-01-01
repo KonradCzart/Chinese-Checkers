@@ -352,6 +352,10 @@ public class Game
 		}
 	}
 	
+	public int getCountPlayer() 
+	{
+		return countPlayer;
+	}
 	
 	private void createBoard()
 	{

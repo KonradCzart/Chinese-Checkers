@@ -393,41 +393,52 @@ public class ThreadedServer implements Runnable {
 						SuccessMessage succes = (SuccessMessage) objectMessage;
 						if(succes.getCodSuccess() == 11111)
 						{
+							
 							if(myGame != null)
 							{
-								myGame.startGame();
-								ArrayList<Pawn> tabPawn = myGame.getArrayPawn();
-								for (ClientHandler tmp : client)
+								int countPlayer = myGame.getCountPlayer();
+								
+								if(countPlayer != 1 && countPlayer != 5)
 								{
-									if(tmp.getGameID() == this.gameID)
+									myGame.startGame();
+									ArrayList<Pawn> tabPawn = myGame.getArrayPawn();
+									for (ClientHandler tmp : client)
 									{
-										ObjectOutputStream outS;
-										outS = tmp.getObjectOutputStream();
-										
-										for(Pawn currentPawn : tabPawn)
+										if(tmp.getGameID() == this.gameID)
 										{
-											AddPawnMessage addPawn = new AddPawnMessage(currentPawn.getPlayer(), currentPawn.getX(), currentPawn.getY());
-											outS.writeObject(addPawn);
+											ObjectOutputStream outS;
+											outS = tmp.getObjectOutputStream();
+										
+											for(Pawn currentPawn : tabPawn)
+											{
+												AddPawnMessage addPawn = new AddPawnMessage(currentPawn.getPlayer(), currentPawn.getX(), currentPawn.getY());
+												outS.writeObject(addPawn);
+											}
 										}
 									}
-								}
-								ColorPlayer nextColorPlayer = myGame.getQueuePlayer();
-								String nextNamePlayer = "";
+									ColorPlayer nextColorPlayer = myGame.getQueuePlayer();
+									String nextNamePlayer = "";
 								
-								for (ClientHandler tmp : client)
-								{
-									
-									if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextColorPlayer)
+									for (ClientHandler tmp : client)
 									{
-										nextNamePlayer = tmp.getName();
-										break;
+									
+										if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextColorPlayer)
+										{
+											nextNamePlayer = tmp.getName();
+											break;
+										}
 									}
+								
+									MoveMessage okMove = new MoveMessage(true, nextColorPlayer, myPlayer, nextNamePlayer);
+								
+									this.sendMessageToGame(okMove);
+								
 								}
-								
-								MoveMessage okMove = new MoveMessage(true, nextColorPlayer, myPlayer, nextNamePlayer);
-								
-								this.sendMessageToGame(okMove);
-								
+								else
+								{
+									FailMessage failMessage = new FailMessage(12589, "Bad number of player");
+									outStream.writeObject(failMessage);
+								}
 							}
 						}
 						else if(succes.getCodSuccess() == 22222)
@@ -441,9 +452,11 @@ public class ThreadedServer implements Runnable {
 								this.sendMessageToGame(newSuccess);
 								this.sendMessageToGame(newMessage);
 								
+								int exitId = gameID;
+								
 								for (ClientHandler tmp : client)
 								{
-									if(tmp.getGameID() == this.gameID)
+									if(tmp.getGameID() == exitId)
 									{
 										tmp.exitGame();
 									}

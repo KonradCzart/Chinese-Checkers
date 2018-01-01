@@ -188,6 +188,7 @@ public class GameScreen
 		Platform.runLater(() -> {
 			this.createBoard();
 			border.setCenter(addBoardPane());
+			arePawnsAdded = false;
 		});
 
 	}
