@@ -2,14 +2,12 @@ package Client.GUIScreens;
 
 import java.io.IOException;
 
-import Client.Client;
+import Client.*;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -27,6 +25,7 @@ public class LoadingScreen
 	private Scene scene;
 	private GridPane grid;
 	private Button btn;
+	private Button serverChangeButton;
 	private TextField userTextField;
 	private Text connectingText;
 	private String playerName;
@@ -94,14 +93,18 @@ public class LoadingScreen
 		btn = new Button("Sign in");
 		btn.setOnAction(event -> login());
 
+		serverChangeButton = new Button("Change Server");
+		serverChangeButton.setOnAction(event -> new ChangeServer(stage));
+		serverChangeButton.setAlignment(Pos.BOTTOM_RIGHT);
 
 		HBox hbBtn = new HBox(10);
 		hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-		hbBtn.getChildren().add(btn);
+		hbBtn.getChildren().addAll(serverChangeButton, btn);
 		grid.add(hbBtn, 1, 5);
 
 		connectingText = new Text();
-		grid.add(connectingText, 1, 7);
+		grid.add(connectingText, 1, 9);
+		//grid.add(serverChangeButton, 1, 6);
 
 		grid.setBackground(new Background(new BackgroundFill(Color.valueOf("#2c2f33"), CornerRadii.EMPTY, Insets.EMPTY)));
 	}
@@ -141,5 +144,4 @@ public class LoadingScreen
 			alert.showAndWait();
 		}
 	}
-
 }
