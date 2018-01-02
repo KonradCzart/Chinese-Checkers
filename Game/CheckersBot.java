@@ -13,6 +13,8 @@ public class CheckersBot
 	private ArrayList<Pawn> tabPawn;
 	private int goalX;
 	private int goalY;
+	private Boolean finishGoal;
+	Boolean remove;
 	
 	public CheckersBot(ColorPlayer myPlayer, Game myGame, int gameID)
 	{
@@ -21,12 +23,15 @@ public class CheckersBot
 		this.myGame = myGame;
 		moveMessage = null;
 		setGoal(myPlayer);
+		finishGoal = false;
+		remove = false;
 	}
 	
 	public MoveMessage moveBot()
 	{
 
 		Boolean move = false;
+		Pawn removePawn = null;
 		
 		int roadX;
 		int roadY;
@@ -38,9 +43,24 @@ public class CheckersBot
 			
 			move = this.getMoveRoad(roadX, roadY, tmp, 2);
 			if(move)
-				return moveMessage;
+			{
+				removePawn = tmp;
+				break;
+			}
 				
 		}
+		
+		if(remove)
+		{
+			remove = false;
+			tabPawn.remove(removePawn);
+		}
+		
+		if(move)
+		{
+			return moveMessage;
+		}
+		
 		
 		for(Pawn tmp : tabPawn)
 		{
@@ -48,11 +68,26 @@ public class CheckersBot
 			roadY = tmp.getY() - goalY;
 			
 			move = this.getMoveRoad(roadX, roadY, tmp, 1);
+			
 			if(move)
-				return moveMessage;
+			{
+				removePawn = tmp;
+				break;
+			}
 				
 		}
 		
+		if(remove)
+		{
+			remove = false;
+			tabPawn.remove(removePawn);
+		}
+		
+		if(move)
+		{
+			
+			return moveMessage;
+		}
 		moveMessage = new MoveMessage(true);
 		return moveMessage;
 	}
@@ -69,14 +104,25 @@ public class CheckersBot
 	
 	private Boolean getMoveRoad(int lengthX, int lengthY, Pawn currentPawn, int count)
 	{
-		Boolean move;
+		Boolean move = false;
+
 		int road = 0;
 		int pawnX = currentPawn.getX();
 		int pawnY = currentPawn.getY();
 		int tmpX =0;
 		int tmpY = 0;
 		
-		if(lengthX >= 0 && lengthY >= 0)
+		if (lengthX == 0 && lengthY == 0 && !finishGoal)
+		{
+			finishGoal = true;
+		}
+		
+		if(Math.abs(lengthX) < 3 && Math.abs(lengthY) < 3 && finishGoal)
+		{
+			move = false;
+			remove = true;
+		}
+		else if(lengthX >= 0 && lengthY >= 0)
 		{
 			
 			tmpX = pawnX;
@@ -157,10 +203,10 @@ public class CheckersBot
 				move = false;
 			}
 		}
-		else if(lengthX >= 0 && lengthY <= 0)
+		else if(lengthX <= 0 && lengthY >= 0)
 		{
-			tmpX = pawnX - count;
-			tmpY = pawnY + count;
+			tmpX = pawnX + count;
+			tmpY = pawnY - count;
 			try {
 				myGame.move(myPlayer, pawnX, pawnY, tmpX, tmpY);
 				currentPawn.setX(tmpX);
@@ -183,8 +229,10 @@ public class CheckersBot
 				move = false;
 			}
 		}
+		if(remove)
+			tabPawn.remove(currentPawn);
 		
-		return false;
+		return move;
 	}
 	
 	public void setPawn(ArrayList<Pawn> tabPawn)

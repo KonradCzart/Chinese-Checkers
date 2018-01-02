@@ -3,6 +3,7 @@ package Server;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import Client.*;
 import Game.*;
@@ -326,7 +327,7 @@ public class ThreadedServer implements Runnable {
 						MoveMessage newMove = (MoveMessage) objectMessage;
 						MoveMessage okMove = null;
 						ColorPlayer nextColorPlayer = null;
-						String nextNamePlayer = "";
+						String nextNamePlayer = "Bot";
 						
 						if(newMove.getEndTurn())
 						{
@@ -350,47 +351,8 @@ public class ThreadedServer implements Runnable {
 								this.sendMessageToGame(okMove);
 								
 								//=======================================
-								while(myGame.botQueue())
-								{
-									MoveMessage botMove = null;
-									for(CheckersBot bot : tabBot)
-									{
-										if(bot.getGameID() == this.gameID && bot.getBotPlayer() == myGame.getQueuePlayer());
-										{
-											botMove = bot.moveBot();
-											
-											if(botMove.getEndTurn())
-											{
-												this.sendMessageToGame(botMove);
-											}
-											else
-											{
-												try {
-													myGame.endMove(bot.getBotPlayer());
-													ColorPlayer nextPlayer = myGame.getQueuePlayer();
-													botMove.setMovePlayer(bot.getBotPlayer());
-													botMove.setNextMovePlayer(nextPlayer);
-													
-													String nextPlayerString = "Bot";
-													
-													for (ClientHandler tmp : client)
-													{
-													
-														if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextColorPlayer)
-														{
-															nextNamePlayer = tmp.getName();
-															break;
-														}
-													}
-													
-													botMove.setNextTurnPlayerName(nextPlayerString);
-													this.sendMessageToGame(botMove);
-												} catch (BadPlayerException e) {
-												}
-											}
-										}
-									}
-								}
+								
+								this.moveBotQueue();
 								//========================================================
 								
 								
@@ -482,53 +444,12 @@ public class ThreadedServer implements Runnable {
 											break;
 										}
 									}
-								
+
 									MoveMessage okMove = new MoveMessage(true, nextColorPlayer, myPlayer, nextNamePlayer);
 								
 									this.sendMessageToGame(okMove);
 									
-									while(myGame.botQueue())
-									{
-										MoveMessage botMove = null;
-										for(CheckersBot bot : tabBot)
-										{
-											if(bot.getGameID() == this.gameID && bot.getBotPlayer() == myGame.getQueuePlayer());
-											{
-												System.out.println(bot.getBotPlayer());
-												botMove = bot.moveBot();
-												
-												if(botMove.getEndTurn())
-												{
-													this.sendMessageToGame(botMove);
-												}
-												else
-												{
-													try {
-														myGame.endMove(bot.getBotPlayer());
-														ColorPlayer nextPlayer = myGame.getQueuePlayer();
-														botMove.setMovePlayer(bot.getBotPlayer());
-														botMove.setNextMovePlayer(nextPlayer);
-														
-														String nextPlayerString = "Bot";
-														
-														for (ClientHandler tmp : client)
-														{
-														
-															if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextColorPlayer)
-															{
-																nextNamePlayer = tmp.getName();
-																break;
-															}
-														}
-														
-														botMove.setNextTurnPlayerName(nextPlayerString);
-														this.sendMessageToGame(botMove);
-													} catch (BadPlayerException e) {
-													}
-												}
-											}
-										}
-									}
+									this.moveBotQueue();
 								
 								}
 								else
@@ -565,11 +486,16 @@ public class ThreadedServer implements Runnable {
 						{
 							if(myGame != null)
 							{
+								
 								ColorPlayer botColor = myGame.addPalyer();
 								CheckersBot bot = new CheckersBot(botColor, myGame, myGame.getID());
 								tabBot.add(bot);
 								myGame.addBotToGame(botColor);
 								bot.setPawn(myGame.getConcretPawn(botColor));
+								
+								String line = "Add bot for game: " + gameID;
+								ChatMessage newChatMessage = new ChatMessage(line);
+								this.sendMessageToGame(newChatMessage);
 							}
 							
 						}
@@ -585,6 +511,82 @@ public class ThreadedServer implements Runnable {
 			} catch (ClassNotFoundException e) {
 				System.out.println("fail server 2");
 			}			
+		}
+		
+		private void moveBotQueue()
+		{
+			while(myGame.botQueue())
+			{
+
+				MoveMessage botMove = null;
+				for(CheckersBot bot : tabBot)
+				{
+
+
+					if(bot.getGameID() == this.gameID && bot.getBotPlayer() == myGame.getQueuePlayer())
+					{
+						///////////
+						try {
+							TimeUnit.SECONDS.sleep(1);
+						} catch (InterruptedException e1) {
+
+						}
+						botMove = bot.moveBot();
+						
+						if(botMove.getEndTurn())
+						{
+							
+							try {
+								myGame.endMove(bot.getBotPlayer());
+								ColorPlayer nextPlayer2 = myGame.getQueuePlayer();
+								botMove.setNextMovePlayer(nextPlayer2);
+								try {
+									this.sendMessageToGame(botMove);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								
+							} catch (BadPlayerException e) {
+								System.out.println("exc1");
+							}
+						}
+						else
+						{
+							try {
+								myGame.endMove(bot.getBotPlayer());
+								ColorPlayer nextPlayer = myGame.getQueuePlayer();
+								botMove.setMovePlayer(bot.getBotPlayer());
+								
+								botMove.setNextMovePlayer(nextPlayer);
+								
+								String nextPlayerString = "Bot";
+								
+								for (ClientHandler tmp : client)
+								{
+								
+									if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextPlayer)
+									{
+										nextPlayerString = tmp.getName();
+										break;
+									}
+								}
+								
+								botMove.setNextTurnPlayerName(nextPlayerString);
+								try {
+									this.sendMessageToGame(botMove);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								
+							} catch (BadPlayerException e) {
+								System.out.println("exc2");
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
