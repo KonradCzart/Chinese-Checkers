@@ -1,5 +1,10 @@
 package Game;
 
+/**
+ * 
+ * @author Konrad Czart
+ * Class pawn holds the coordinates on which it is located
+ */
 public class Pawn 
 {
 	private ColorPlayer myPlayer;

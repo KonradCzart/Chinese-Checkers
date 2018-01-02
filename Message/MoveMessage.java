@@ -2,6 +2,10 @@ package Message;
 
 import Game.ColorPlayer;
 
+/**
+ * @author Konrad Czart
+ * Class for sending messages with concert move
+ */
 public class MoveMessage implements Message
 {
 
@@ -19,7 +23,13 @@ public class MoveMessage implements Message
 	private ColorPlayer movePlayer;
 	private ColorPlayer nextMovePlayer;
 	
-
+	/**
+	 * 
+	 * @param oldX old X pawn position
+	 * @param oldY old Y pawn position
+	 * @param newX new X pawn position
+	 * @param newY new Y pawn position
+	 */
 	public MoveMessage(int oldX, int oldY, int newX, int newY)
 	{
 		this.oldX = oldX;

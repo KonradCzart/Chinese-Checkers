@@ -1,5 +1,10 @@
 package Message;
 
+/**
+ * 
+ * @author Konrad Czart
+ * Class for sending chat message between clients 
+ */
 public class ChatMessage implements Message
 {
 

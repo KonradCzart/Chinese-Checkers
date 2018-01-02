@@ -1,6 +1,6 @@
 package Message;
 
-/*
+/**
  * @author Konrad Czart
  * Class for sending messages with success
  */

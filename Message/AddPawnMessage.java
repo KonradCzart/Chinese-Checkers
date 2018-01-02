@@ -2,6 +2,11 @@ package Message;
 
 import Game.ColorPlayer;
 
+/**
+ * 
+ * @author Konrad Czart
+ * Message with information about position pawn
+ */
 public class AddPawnMessage implements Message
 {
 

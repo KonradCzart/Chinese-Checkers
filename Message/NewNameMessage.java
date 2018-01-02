@@ -1,5 +1,9 @@
 package Message;
 
+/**
+ * @author Konrad Czart
+ * Class for sending messages new name for client
+ */
 public class NewNameMessage implements Message
 {
 
