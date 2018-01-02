@@ -76,6 +76,111 @@ public class GameScreen
 	}
 
 	/**
+	 * Create board field logic and table
+	 */
+	private void createBoard()
+	{
+		int i = 0;
+
+		for(int j = 0; j<19; j++)
+			tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+		int k = 13;
+
+		for(i=1; i<5; i++)
+		{
+			for(int j = 0; j < k; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			for(int j = k; j < 14; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			for(int j = 14; j < 19; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			k--;
+		}
+
+		k = 4;
+		for(i=5; i<10; i++)
+		{
+			for(int j = 0; j < 5; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			int tmp = 5 + k;
+
+			for(int j = 5; j < tmp; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			for(int j = tmp; j < 14; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			tmp = 14 + k;
+
+			for(int j = 14; j < tmp; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			for(int j = tmp; j < 19; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			k--;
+
+		}
+
+
+		k = 4;
+		int c = 8;
+
+		for(i=10; i<14; i++)
+		{
+			for(int j = 0; j < k; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+
+			for(int j = k; j < 5; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			int tmp = 5 + c;
+
+			for(int j = 5; j < tmp; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+
+			k--;
+			c--;
+
+			for(int j = tmp; j < 14; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			for(int j = 14; j < 19; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+		}
+
+		k = 4;
+
+		for(i=14; i<18; i++)
+		{
+			for(int j = 0; j < 5; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			int tmp = k + 5;
+
+			for(int j = 5; j < tmp; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
+
+			for(int j = tmp; j < 19; j++)
+				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
+
+			k--;
+		}
+
+		for(int j = 0; j<19; j++)
+			tabField[18][j] = new BoardCircle(FieldStatus.CLOSED);
+
+	}
+
+	/**
 	 * It loads containers and set their layouts
 	 */
 	private void load()
@@ -203,11 +308,17 @@ public class GameScreen
 	}
 
 
+	/**
+	 * Creates change server object
+	 */
 	private void changeServer()
 	{
 		new ChangeServer(stage);
 	}
 
+	/**
+	 * Creates join game Dialog
+	 */
 	private void gameIdDialog()
 	{
 		TextInputDialog dialog = new TextInputDialog("1");
@@ -230,6 +341,10 @@ public class GameScreen
 		});
 	}
 
+
+	/**
+	 * Adds top button to start game and end turn.
+	 */
 	private void addTopButtons()
 	{
 		HBox stack = new HBox();
@@ -249,6 +364,7 @@ public class GameScreen
 				System.out.println("Start game failure..");
 			}
 		});
+
 		endRoundButton.setOnAction(event ->
 		{
 			MoveMessage newMessage = new MoveMessage(true);
@@ -261,13 +377,17 @@ public class GameScreen
 
 		stack.setSpacing(8);
 		stack.getChildren().addAll(endRoundButton, startGameButton);
-		stack.setAlignment(Pos.CENTER_RIGHT);     // Right-justify nodes in stack
-		StackPane.setMargin(startGameButton, new Insets(0, 10, 0, 0)); // Center "?"
+		stack.setAlignment(Pos.CENTER_RIGHT);
+		StackPane.setMargin(startGameButton, new Insets(0, 10, 0, 0));
 
-		topHBox.getChildren().add(stack);            // Add to HBox from Example 1-2
-		HBox.setHgrow(stack, Priority.ALWAYS);    // Give stack any extra space
+		topHBox.getChildren().add(stack);
+		HBox.setHgrow(stack, Priority.ALWAYS);
 	}
 
+	/**
+	 * Adds chatPane to GUI
+	 * @return BorderPane scrolled object
+	 */
 	private BorderPane addChatPane()
 	{
 		BorderPane flow = new BorderPane();
@@ -315,6 +435,9 @@ public class GameScreen
 		return flow;
 	}
 
+	/**
+	 * Sends message to chat
+	 */
 	private void sendMessageToChat()
 	{
 		String message = chatField.getText();
@@ -334,6 +457,10 @@ public class GameScreen
 		}
 	}
 
+	/**
+	 * Adds boardPane to GUI
+	 * @return boardPane container
+	 */
 	private GridPane addBoardPane()
 	{
 		GridPane gridPane = new GridPane();
@@ -345,6 +472,10 @@ public class GameScreen
 		return gridPane;
 	}
 
+	/**
+	 * Draw a board
+	 * @param grid container
+	 */
 	private void paintBoard(GridPane grid)
 	{
 		FieldStatus currentStatus;
@@ -374,6 +505,10 @@ public class GameScreen
 
 	}
 
+	/**
+	 * Actions when BoardCircle is clicked
+	 * @param circle single circle
+	 */
 	private void onBoardCircleClick(BoardCircle circle)
 	{
 		if(arePawnsAdded)
@@ -391,20 +526,12 @@ public class GameScreen
 			}
 			else
 			{
-				// JESLI POLE JEST PIONKIEM TO WTEDY MOZNA TU COS ZROBIC
-				// Czekaj na potwierdznie ruchu i wtedy rusz ten pionek tam..
-//			move(clickedBoardCircle, circle);
-
-				// jesli metoda move pozwoli to rusz
-				//circle.setFill(lastClickedColor);
 				clickedBoardCircle.setFill(lastClickedColor);
 				int oldX, oldY, newX, newY;
 				oldX = clickedBoardCircle.getX();
 				oldY = clickedBoardCircle.getY();
 				newX = circle.getX();
 				newY = circle.getY();
-
-				//this.movePawn(oldX, oldY, newX, newY);
 
 				MoveMessage newMessage = new MoveMessage(oldX, oldY, newX, newY);
 				try {
@@ -418,7 +545,11 @@ public class GameScreen
 		}
 	}
 
-
+	/**
+	 * Color the Text of player name in top HBox
+	 * @param name name of player
+	 * @param colorPlayer player unique color
+	 */
 	public void getPlayerNameColored(String name, ColorPlayer colorPlayer)
 	{
 		String line = "Now round: " + name;
@@ -426,115 +557,26 @@ public class GameScreen
 		setBoardCircleColor(playerNameText, colorPlayer);
 	}
 
+	/**
+	 * Moves player circle in GUI
+	 * @param oldX old x param
+	 * @param oldY old y param
+	 * @param newX new x param
+	 * @param newY new y param
+	 * @param movePlayer player unique color
+	 */
 	public void movePawn(int oldX, int oldY, int newX, int newY, ColorPlayer movePlayer)
 	{
 		tabField[oldX][oldY].setFill(Color.valueOf("#FFFFFF"));
 		setBoardCircleColor(tabField[newX][newY], movePlayer);
 	}
 
-	private void createBoard()
-	{
-		int i = 0;
-
-		for(int j = 0; j<19; j++)
-			tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
-
-		int k = 13;
-
-		for(i=1; i<5; i++)
-		{
-			for(int j = 0; j < k; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
-
-			for(int j = k; j < 14; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
-
-			for(int j = 14; j < 19; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
-
-			k--;
-		}
-
-		k = 4;
-		for(i=5; i<10; i++)
-		{
-			for(int j = 0; j < 5; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
-
-			int tmp = 5 + k;
-
-			for(int j = 5; j < tmp; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
-
-			for(int j = tmp; j < 14; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
-
-			tmp = 14 + k;
-
-			for(int j = 14; j < tmp; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
-
-			for(int j = tmp; j < 19; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
-
-			k--;
-
-		}
-
-
-		k = 4;
-		int c = 8;
-
-		for(i=10; i<14; i++)
-		{
-			for(int j = 0; j < k; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
-
-
-			for(int j = k; j < 5; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
-
-			int tmp = 5 + c;
-
-			for(int j = 5; j < tmp; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
-
-
-			k--;
-			c--;
-
-			for(int j = tmp; j < 14; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
-
-			for(int j = 14; j < 19; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
-
-		}
-
-		k = 4;
-
-		for(i=14; i<18; i++)
-		{
-			for(int j = 0; j < 5; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
-
-			int tmp = k + 5;
-
-			for(int j = 5; j < tmp; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.AVAILABLE);
-
-			for(int j = tmp; j < 19; j++)
-				tabField[i][j] = new BoardCircle(FieldStatus.CLOSED);
-
-			k--;
-		}
-
-		for(int j = 0; j<19; j++)
-			tabField[18][j] = new BoardCircle(FieldStatus.CLOSED);
-
-	}
-
-
+	/**
+	 * Color shapes such as: BoardCircle, TextField
+	 * @param boardCircle shape to color
+	 * @param colorPlayer player unique color
+	 *
+	 */
 	private void setBoardCircleColor(Shape boardCircle, ColorPlayer colorPlayer)
 	{
 		switch (colorPlayer)
@@ -580,20 +622,34 @@ public class GameScreen
 		}
 	}
 
+	/**
+	 * Adds message to chat
+	 * @param chatMessage Text to be shown in chat
+	 */
 	private void addTextToChat(Text chatMessage)
 	{
-		Platform.runLater(() -> {
+		Platform.runLater(() ->
+		{
 			VBox.setMargin(chatMessage, new Insets(0, 0, 0, 8));
 			chatBox.getChildren().add(chatMessage);
 		});
 	}
-
+	/**
+	 * Mediates between server and GUI to send message chat
+	 * @param chat message to be shown
+	 */
 	public void sendToChat(String chat)
 	{
 		if(isChatCreated)
 			addTextToChat(new Text(chat));
 	}
 
+	/**
+	 * Add pawn to board
+	 * @param colorPlayer player unique color
+	 * @param x x point
+	 * @param y y point
+	 */
 	public void addPawn(ColorPlayer colorPlayer, int x, int y)
 	{
 		BoardCircle k = tabField[x][y];
