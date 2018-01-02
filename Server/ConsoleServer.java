@@ -21,8 +21,12 @@ public class ConsoleServer
 			hostname = args[0];
 			try
 			{
+				port = Integer.parseInt(args[1]);
+
 				if(port > 0 && port <= 65535)
-					port = Integer.parseInt(args[1]);
+				{
+					defaultConnection = false;
+				}
 				else
 					defaultConnection = true;
 			}
@@ -45,6 +49,7 @@ public class ConsoleServer
 			serverThread.start();
 		}
 
+		System.out.println("Chinese Game Server\nWorking on " + hostname + ":" + port);
 
 		Scanner scan = new Scanner(System.in);
 		try
