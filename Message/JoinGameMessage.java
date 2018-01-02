@@ -1,5 +1,9 @@
 package Message;
 
+/**
+ * @author Konrad Czart
+ * Class for sending messages with join status
+ */
 public class JoinGameMessage implements Message
 {
 

@@ -1,5 +1,10 @@
 package Game;
 
+/**
+ * 
+ * @author Konrad Czart
+ * The field on the board stores the field conditions
+ */
 public class Field 
 {
 	private FieldStatus status;
