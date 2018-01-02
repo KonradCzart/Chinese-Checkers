@@ -2,10 +2,9 @@ package Game;
 
 public class Field 
 {
-	FieldStatus status;
-	Zone zone;
-	
-	
+	private FieldStatus status;
+	private Zone zone;
+
 	public Field()
 	{
 		status = FieldStatus.CLOSED;
