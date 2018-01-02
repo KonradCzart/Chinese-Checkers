@@ -6,7 +6,6 @@ import Game.FieldStatus;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -17,7 +16,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -31,31 +29,36 @@ import Message.*;
  */
 public class GameScreen
 {
+	private boolean isChatCreated;
+	private boolean arePawnsAdded;
+	private BorderPane border;
+	private BoardCircle clickedBoardCircle;
+	private BoardCircle[][] tabField;
+	private Client myClient;
+
 	private Scene scene;
 	private String playerName;
 	private Stage stage;
 	private HBox hbox;
+	private VBox chatBox;
 	private TextField chatField;
 	private Button sendChatButton;
 	private Button startGameButton;
 	private Button endRoundButton;
-	private Client myClient;
-	private VBox chatBox;
+
 	private ScrollPane scrollPane;
-	private BoardCircle[][] tabField;
-	private BoardCircle clickedBoardCircle;
+
 	private Paint lastClickedColor;
 	private Text playerNameText;
-	private boolean isChatCreated;
-	private boolean arePawnsAdded;
-	private BorderPane border;
+
+
 
 	GameScreen(String playerName, Stage stage, Client myClient)
 	{
 		this.stage = stage;
 		this.playerName = playerName;
 		this.myClient = myClient;
-		this.myClient.startServerLisener(this);
+		this.myClient.startServerListener(this);
 		NewNameMessage newMessage = new NewNameMessage(playerName);
 		try {
 			this.myClient.sendMessage(newMessage);
@@ -79,7 +82,7 @@ public class GameScreen
 
 		MenuBar menuBar = new MenuBar();
 		Menu menuFile = new Menu("File");
-		Menu menuInfo = new Menu("Info");
+		Menu menuHelp = new Menu("Help");
 
 		MenuItem createGame = new MenuItem(("Create the game"));
 		createGame.setOnAction(event ->
@@ -93,10 +96,7 @@ public class GameScreen
 		});
 
 		MenuItem joinGame = new MenuItem(("Join the game"));
-		joinGame.setOnAction(event ->
-		{
-			gameIdDialog();
-		});
+		joinGame.setOnAction(event -> gameIdDialog());
 		
 		MenuItem removeGame = new MenuItem(("Remove game"));
 		removeGame.setOnAction(event ->
@@ -107,8 +107,6 @@ public class GameScreen
 			} catch (IOException e) {
 				
 			}
-			
-			//this.paintBoard(grid);
 		});
 		
 		MenuItem setName = new MenuItem(("Set name"));
@@ -123,8 +121,6 @@ public class GameScreen
 
 			result.ifPresent(name ->
 			{
-				
-				
 				String lineName = result.get();
 
 				if (lineName.matches("[\\w]+"))
@@ -152,7 +148,16 @@ public class GameScreen
 		exit.setOnAction(t -> System.exit(0));
 
 		menuFile.getItems().addAll(joinGame, createGame, changeServer, setName, new SeparatorMenuItem(),removeGame, exit);
-		menuBar.getMenus().addAll(menuFile, menuInfo);
+		menuBar.getMenus().addAll(menuFile, menuHelp);
+
+		MenuItem authorsInfo = new MenuItem("About..");
+		authorsInfo.setOnAction(t ->
+		{
+			String context = "Created by:\nKonrad Czart & Kacper Zielinski\nConnection: "
+					+ myClient.getLocalhost() + ":" + myClient.getPort();
+			infoDialog("About", "Chinese Checkers Game", context);
+		});
+		menuHelp.getItems().addAll(authorsInfo);
 
 		hbox.getChildren().add(menuBar);
 		hbox = addHBox();
@@ -180,6 +185,16 @@ public class GameScreen
 		hbox.getChildren().addAll(playerNameText);
 
 		return hbox;
+	}
+
+	private void infoDialog(String title, String headerText, String context)
+	{
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle(title);
+		alert.setHeaderText(headerText);
+		alert.setContentText(context);
+
+		alert.showAndWait();
 	}
 
 	public void removeGame()
@@ -396,7 +411,6 @@ public class GameScreen
 					GridPane.setRowIndex(c, i);
 					GridPane.setColumnIndex(c, j);
 					GridPane.setMargin(c, new Insets(6, 6, 6, 6));
-//					GridPane.setMargin(c, new Insets(7, 7, 7, 7));
 					grid.getChildren().addAll(c);
 					c.setOnMouseClicked(event -> onBoardCircleClick(c));
 				}

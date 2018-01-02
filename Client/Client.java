@@ -1,68 +1,58 @@
 package Client;
 
 import java.io.IOException;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Observable;
-import java.util.Observer;
-
 import Client.GUIScreens.GameScreen;
 import Message.*;
-import Server.ThreadedServer;
-import javafx.scene.shape.Circle;
 
 public class Client
 {
 	private Socket socket;
 	private ServerListener serverLisener;
 	private ObjectOutputStream outStream;
-	private String localHost;
-	private int adress;
+	private String localhost;
+	private int port;
 
-	
 	public Client()
 	{
-		localHost = "localhost";
-		adress = 8189;
+		localhost = "localhost";
+		port = 8189;
 	}
-	public Client(String localHost, int adress)
+
+	public Client(String localhost, int adress)
 	{
-		this.localHost = localHost;
-		this.adress = adress;
+		this.localhost = localhost;
+		this.port = adress;
 	}
-	
 	public void connectServer() throws UnknownHostException, IOException
 	{
-		socket = new Socket(localHost, adress);
+		socket = new Socket(localhost, port);
 		outStream = new ObjectOutputStream ( socket.getOutputStream());
 	}
-	
-	public void startServerLisener(GameScreen game)
+
+	public void startServerListener(GameScreen game)
 	{
 		serverLisener = new ServerListener(socket, game);
-		
+
 		Runnable r = serverLisener;
 		Thread t = new Thread(r);
 		t.start();
 	}
-	
+
 	public void sendMessage(Message newMessage) throws IOException
 	{
 		outStream.writeObject(newMessage);
 	}
 
-	public void closeConnection()
+	public String getLocalhost()
 	{
-//		try
-//		{
-//			outStream.close();
-//			socket.close();
-//		}
-//		catch (IOException e)
-//		{
-//			e.printStackTrace();
-//		}
+		return localhost;
+	}
+
+	public int getPort()
+	{
+		return port;
 	}
 }

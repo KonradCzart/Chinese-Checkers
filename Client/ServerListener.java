@@ -3,18 +3,14 @@ package Client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.*;
-import java.util.Scanner;
-
 import Client.GUIScreens.GameScreen;
 import Game.ColorPlayer;
 import Message.*;
 
 public class ServerListener implements Runnable
 {
-	Socket currentSocket;
-	Object tmp;
+	private Socket currentSocket;
 	private GameScreen game;
-
 	
 	public ServerListener(Socket socket, GameScreen game)
 	{
@@ -30,7 +26,8 @@ public class ServerListener implements Runnable
 			
 			
 			ObjectInputStream in = new ObjectInputStream(currentSocket.getInputStream());
-			
+
+			Object tmp;
 			while((tmp = in.readObject()) != null)
 			{
 				
@@ -104,11 +101,10 @@ public class ServerListener implements Runnable
 			
 			
 		} catch (IOException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		System.out.println("Koniec lisenera");
+		System.out.println("End of listener");
 	}
 
 }
