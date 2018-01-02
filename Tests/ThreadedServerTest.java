@@ -1,12 +1,16 @@
 package Tests;
 
+import Client.Client;
 import Server.ThreadedServer;
+import javafx.application.Platform;
 import org.junit.*;
+
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
 /**
- * Created by Kacper on 2017-12-20.
+ * This class is testing server's methods
  */
 public class ThreadedServerTest {
 
@@ -37,8 +41,33 @@ public class ThreadedServerTest {
 		assertNotNull(server);
 	}
 
-	@Test(timeout=1000)
-	public void getClientName() throws Exception {
-		assertNotNull(server.getClientName().get(0));
+	@Test
+	public void getClientName() throws Exception
+	{
+		Thread thread = new Thread(() ->
+		{
+			try
+			{
+				Platform.runLater(() ->
+				{
+					Client me = new Client();
+					try {
+						me.connectServer();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				});
+				Thread.sleep(1000);
+				Platform.runLater(() ->
+				{
+					assertNotNull(server.getClientName().get(0));
+				});
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		});
+		thread.start();
 	}
 }
