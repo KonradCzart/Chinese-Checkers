@@ -12,74 +12,101 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.util.Optional;
-
 import Client.*;
 import Message.*;
 
-
 /**
- * Created by Kacper on 2017-12-29.
+ * Main game GUI
+ * Contains board, chat, menu, buttons, containers etc.
  */
 public class GameScreen
 {
+	private static final int WINDOW_WIDTH = 1024;
+	private static final int WINDOW_HEIGHT = 800;
+
 	private boolean isChatCreated;
 	private boolean arePawnsAdded;
 	private BorderPane border;
 	private BoardCircle clickedBoardCircle;
 	private BoardCircle[][] tabField;
 	private Client myClient;
-
+	private HBox topHBox;
+	private Paint lastClickedColor;
 	private Scene scene;
 	private String playerName;
-	private Stage stage;
-	private HBox hbox;
-	private VBox chatBox;
-	private TextField chatField;
-	private Button sendChatButton;
-	private Button startGameButton;
-	private Button endRoundButton;
-
-	private ScrollPane scrollPane;
-
-	private Paint lastClickedColor;
 	private Text playerNameText;
+	private TextField chatField;
+	private Stage stage;
+	private VBox chatBox;
 
-
-
+	/**
+	 * Constructor, it starts game GUI
+	 * @param playerName name taken from previous GUI (ex. LoadingScreen)
+	 * @param stage javaFX stage
+	 * @param myClient Client game class to handle with server
+	 */
 	GameScreen(String playerName, Stage stage, Client myClient)
 	{
 		this.stage = stage;
 		this.playerName = playerName;
 		this.myClient = myClient;
 		this.myClient.startServerListener(this);
+		isChatCreated = false;
+		arePawnsAdded = false;
+		Platform.setImplicitExit(false);
+
 		NewNameMessage newMessage = new NewNameMessage(playerName);
 		try {
 			this.myClient.sendMessage(newMessage);
 		} catch (IOException e) {
-			System.out.println("fail!");
+			System.out.println("NewNameMessage method failed..");
 		}
 
-		Platform.setImplicitExit(false);
-		isChatCreated = false;
-		arePawnsAdded = false;
-		hbox = new HBox();
 		tabField = new BoardCircle[19][19];
+
 		createBoard();
 		load();
-
 	}
 
+	/**
+	 * It loads containers and set their layouts
+	 */
 	private void load()
 	{
 		border = new BorderPane();
+		topHBox = new HBox();
 
+		createGameMenu();
+		addPlayerNameText();
+		addTopButtons();
+
+		border.setTop(topHBox);
+		border.setCenter(addBoardPane());
+		border.setRight(addChatPane());
+
+		topHBox.setPadding(new Insets(15, 12, 15, 12));
+		topHBox.setSpacing(10);
+		topHBox.setStyle("-fx-background-color: #336699;");
+
+		scene = new Scene(border, WINDOW_WIDTH - 100, WINDOW_HEIGHT - 100);
+		stage.setScene(scene);
+		stage.setMinWidth(WINDOW_WIDTH);
+		stage.setMinHeight(WINDOW_HEIGHT);
+		stage.show();
+	}
+
+	/**
+	 * Creates menuBar with menuItems
+	 */
+	private void createGameMenu()
+	{
 		MenuBar menuBar = new MenuBar();
 		Menu menuFile = new Menu("File");
 		Menu menuHelp = new Menu("Help");
@@ -97,7 +124,7 @@ public class GameScreen
 
 		MenuItem joinGame = new MenuItem(("Join the game"));
 		joinGame.setOnAction(event -> gameIdDialog());
-		
+
 		MenuItem removeGame = new MenuItem(("Remove game"));
 		removeGame.setOnAction(event ->
 		{
@@ -105,10 +132,10 @@ public class GameScreen
 			try {
 				myClient.sendMessage(newMessage);
 			} catch (IOException e) {
-				
+				System.out.println("Removing game failure..");
 			}
 		});
-		
+
 		MenuItem setName = new MenuItem(("Set name"));
 		setName.setOnAction(event ->
 		{
@@ -137,15 +164,19 @@ public class GameScreen
 					String errorLine = "Your name is invalid. Use only alphanumeric characters";
 					errorDialog(errorLine);
 				}
-		
+
 			});
 		});
-		
+
 		MenuItem changeServer = new MenuItem(("Change Server"));
 		changeServer.setOnAction(t -> changeServer());
 
 		MenuItem exit = new MenuItem("Exit");
-		exit.setOnAction(t -> System.exit(0));
+		exit.setOnAction(t ->
+		{
+			Platform.exit();
+			System.exit(0);
+		});
 
 		menuFile.getItems().addAll(joinGame, createGame, changeServer, setName, new SeparatorMenuItem(),removeGame, exit);
 		menuBar.getMenus().addAll(menuFile, menuHelp);
@@ -159,88 +190,25 @@ public class GameScreen
 		});
 		menuHelp.getItems().addAll(authorsInfo);
 
-		hbox.getChildren().add(menuBar);
-		hbox = addHBox();
-
-		border.setTop(hbox);
-		addStackPane(hbox);
-		border.setCenter(addBoardPane());
-		border.setRight(addBorderPane());
-
-		scene = new Scene(border, 924, 700);
-		stage.setScene(scene);
-		stage.setMinWidth(1024);
-		stage.setMinHeight(800);
-		stage.show();
+		topHBox.getChildren().add(menuBar);
 	}
 
-	private HBox addHBox()
+	/**
+	 * Adds playerName Text to container
+	 */
+	private void addPlayerNameText()
 	{
-		hbox.setPadding(new Insets(15, 12, 15, 12));
-		hbox.setSpacing(10);
-		hbox.setStyle("-fx-background-color: #336699;");
-
 		playerNameText = new Text("");
-
-		hbox.getChildren().addAll(playerNameText);
-
-		return hbox;
+		topHBox.getChildren().add(playerNameText);
 	}
 
-	private void infoDialog(String title, String headerText, String context)
-	{
-		Alert alert = new Alert(Alert.AlertType.INFORMATION);
-		alert.setTitle(title);
-		alert.setHeaderText(headerText);
-		alert.setContentText(context);
-
-		alert.showAndWait();
-	}
-
-	public void removeGame()
-	{
-		
-		Platform.runLater(() -> {
-			this.createBoard();
-			border.setCenter(addBoardPane());
-			arePawnsAdded = false;
-		});
-
-	}
-	public void errorDialog(String errorMessage)
-	{
-		
-		Platform.runLater(() -> {
-			Alert alert = new Alert(Alert.AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setHeaderText("");
-			alert.setContentText(errorMessage);
-
-			alert.showAndWait();
-		});
-		
-	}
-	
-	public void successDialog(String successMessage)
-	{
-		
-		Platform.runLater(() -> {
-			Alert alert = new Alert(Alert.AlertType.INFORMATION);
-			alert.setTitle("Succes");
-			alert.setHeaderText("");
-			alert.setContentText(successMessage);
-
-			alert.showAndWait();
-		});
-		
-	}
 
 	private void changeServer()
 	{
 		new ChangeServer(stage);
 	}
 
-	public void gameIdDialog()
+	private void gameIdDialog()
 	{
 		TextInputDialog dialog = new TextInputDialog("1");
 		dialog.setTitle("Change game ID");
@@ -252,7 +220,7 @@ public class GameScreen
 		result.ifPresent(name ->
 		{
 			int value = Integer.parseInt(result.get());
-			
+
 			JoinGameMessage newJoinMessage = new JoinGameMessage(value, false);
 			try {
 				myClient.sendMessage(newJoinMessage);
@@ -262,12 +230,12 @@ public class GameScreen
 		});
 	}
 
-	private void addStackPane(HBox hb)
+	private void addTopButtons()
 	{
 		HBox stack = new HBox();
 
-		startGameButton = new Button("Start");
-		endRoundButton = new Button("EndRound");
+		Button startGameButton = new Button("Start");
+		Button endRoundButton = new Button("EndRound");
 
 		startGameButton.setPrefSize(100, 20);
 		endRoundButton.setPrefSize(100, 20);
@@ -278,9 +246,8 @@ public class GameScreen
 			try {
 				myClient.sendMessage(newMessage);
 			} catch (IOException e) {
-				
+				System.out.println("Start game failure..");
 			}
-
 		});
 		endRoundButton.setOnAction(event ->
 		{
@@ -297,11 +264,11 @@ public class GameScreen
 		stack.setAlignment(Pos.CENTER_RIGHT);     // Right-justify nodes in stack
 		StackPane.setMargin(startGameButton, new Insets(0, 10, 0, 0)); // Center "?"
 
-		hb.getChildren().add(stack);            // Add to HBox from Example 1-2
+		topHBox.getChildren().add(stack);            // Add to HBox from Example 1-2
 		HBox.setHgrow(stack, Priority.ALWAYS);    // Give stack any extra space
 	}
 
-	private BorderPane addBorderPane()
+	private BorderPane addChatPane()
 	{
 		BorderPane flow = new BorderPane();
 		flow.setPadding(new Insets(5, 5, 10, 5));
@@ -311,7 +278,7 @@ public class GameScreen
 
 		chatBox = new VBox();
 		isChatCreated = true;
-		scrollPane = new ScrollPane();
+		ScrollPane scrollPane = new ScrollPane();
 		scrollPane.setContent(chatBox);
 		scrollPane.setStyle(" -fx-background: #F0F5FA; -fx-border-color: #F0F5FA;");
 		scrollPane.setMaxHeight(620);
@@ -328,11 +295,8 @@ public class GameScreen
 			if(event.getCode() == KeyCode.ENTER)
 				sendMessageToChat();
 		});
-		sendChatButton = new Button("Send");
-		sendChatButton.setOnAction(event ->
-		{
-			sendMessageToChat();
-		});
+		Button sendChatButton = new Button("Send");
+		sendChatButton.setOnAction(event -> sendMessageToChat());
 
 		chatBox.setPadding(new Insets(10));
 		chatBox.setSpacing(8);
@@ -370,22 +334,13 @@ public class GameScreen
 		}
 	}
 
-	public GridPane addBoardPane()
+	private GridPane addBoardPane()
 	{
 		GridPane gridPane = new GridPane();
 		gridPane.setAlignment(Pos.CENTER);
 		gridPane.setTranslateX(-170);
 
 		paintBoard(gridPane);
-
-		//gridPane.setTranslateX(50);
-		//gridPane.setScaleX(2.0);
-		//gridPane.setPadding(new Insets(10, 10, 10, 10));
-
-//		Text chartTitle = new Text("Current Year");
-//		chartTitle.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-
-//		grid.add(chartTitle, 0, 0);
 
 		return gridPane;
 	}
@@ -414,19 +369,10 @@ public class GameScreen
 					grid.getChildren().addAll(c);
 					c.setOnMouseClicked(event -> onBoardCircleClick(c));
 				}
-				else if(currentStatus == FieldStatus.CLOSED)
-				{
-					//System.out.printf("_");
-				}
-				else if(currentStatus == FieldStatus.UNAVAILABLE)
-				{
-					//System.out.printf("8");
-				}
 			}
 		}
 
 	}
-
 
 	private void onBoardCircleClick(BoardCircle circle)
 	{
@@ -464,7 +410,7 @@ public class GameScreen
 				try {
 					myClient.sendMessage(newMessage);
 				} catch (IOException e) {
-
+					System.out.println("Move message failure..");
 				}
 
 				clickedBoardCircle = null;
@@ -472,60 +418,19 @@ public class GameScreen
 		}
 	}
 
+
 	public void getPlayerNameColored(String name, ColorPlayer colorPlayer)
 	{
 		String line = "Now round: " + name;
 		playerNameText.setText(line);
-
-		switch (colorPlayer)
-		{
-			case PLAYER_ONE:
-			{
-				playerNameText.setFill(Color.valueOf("#DFFF00"));
-				break;
-			}
-			case PLAYER_TWO:
-			{
-				playerNameText.setFill(Color.valueOf("#FF00FF"));
-				break;
-			}
-			case PLAYER_THREE:
-			{
-				playerNameText.setFill(Color.valueOf("#00FFFF"));
-				break;
-			}
-			case PLAYER_FOUR:
-			{
-				playerNameText.setFill(Color.valueOf("#AFAFAF"));
-				break;
-			}
-			case PLAYER_FIVE:
-			{
-				playerNameText.setFill(Color.valueOf("#CAFAFA"));
-				break;
-			}
-			case PLAYER_SIX:
-			{
-				playerNameText.setFill(Color.valueOf("#CCCCCC"));
-				break;
-			}
-			case PLAYER_EMPTY:
-			{
-				playerNameText.setFill(Color.valueOf("#FFFFFF"));
-				break;
-			}
-			default:
-				break;
-
-		}
+		setBoardCircleColor(playerNameText, colorPlayer);
 	}
-	
+
 	public void movePawn(int oldX, int oldY, int newX, int newY, ColorPlayer movePlayer)
 	{
 		tabField[oldX][oldY].setFill(Color.valueOf("#FFFFFF"));
 		setBoardCircleColor(tabField[newX][newY], movePlayer);
 	}
-
 
 	private void createBoard()
 	{
@@ -629,31 +534,8 @@ public class GameScreen
 
 	}
 
-	private void addTextToChat(Text chatMessage)
-	{
-		Platform.runLater(() -> {
-			VBox.setMargin(chatMessage, new Insets(0, 0, 0, 8));
-			chatBox.getChildren().add(chatMessage);
-		});
-	}
 
-	public void sendToChat(String chat)
-	{
-		if(isChatCreated)
-			addTextToChat(new Text(chat));
-	}
-
-	public void addPawn(ColorPlayer colorPlayer, int x, int y)
-	{
-		BoardCircle k = tabField[x][y];
-		k.setColorPlayer(colorPlayer);
-		k.setX(x);
-		k.setY(y);
-		setBoardCircleColor(k, colorPlayer);
-		arePawnsAdded = true;
-	}
-
-	private void setBoardCircleColor(BoardCircle boardCircle, ColorPlayer colorPlayer)
+	private void setBoardCircleColor(Shape boardCircle, ColorPlayer colorPlayer)
 	{
 		switch (colorPlayer)
 		{
@@ -696,5 +578,92 @@ public class GameScreen
 				break;
 
 		}
+	}
+
+	private void addTextToChat(Text chatMessage)
+	{
+		Platform.runLater(() -> {
+			VBox.setMargin(chatMessage, new Insets(0, 0, 0, 8));
+			chatBox.getChildren().add(chatMessage);
+		});
+	}
+
+	public void sendToChat(String chat)
+	{
+		if(isChatCreated)
+			addTextToChat(new Text(chat));
+	}
+
+	public void addPawn(ColorPlayer colorPlayer, int x, int y)
+	{
+		BoardCircle k = tabField[x][y];
+		k.setColorPlayer(colorPlayer);
+		k.setX(x);
+		k.setY(y);
+		setBoardCircleColor(k, colorPlayer);
+		arePawnsAdded = true;
+	}
+
+	/**
+	 * Creates Dialog windows with information icon
+	 * @param title Title of window
+	 * @param headerText Header text
+	 * @param context Context
+	 */
+	public void infoDialog(String title, String headerText, String context)
+	{
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle(title);
+		alert.setHeaderText(headerText);
+		alert.setContentText(context);
+
+		alert.showAndWait();
+	}
+
+	/**
+	 * Creates Dialog windows with error icon
+	 * @param errorMessage Context of error
+	 */
+	public void errorDialog(String errorMessage)
+	{
+		Platform.runLater(() -> {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("");
+			alert.setContentText(errorMessage);
+
+			alert.showAndWait();
+		});
+
+	}
+
+	/**
+	 * Creates Dialog windows with success icon
+	 * @param successMessage Context of success
+	 */
+	public void successDialog(String successMessage)
+	{
+		Platform.runLater(() -> {
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("Success");
+			alert.setHeaderText("");
+			alert.setContentText(successMessage);
+
+			alert.showAndWait();
+		});
+
+	}
+
+	/**
+	 * It removes game and reset GUI
+	 */
+	public void removeGame()
+	{
+		Platform.runLater(() -> {
+			this.createBoard();
+			border.setCenter(addBoardPane());
+			arePawnsAdded = false;
+		});
+
 	}
 }

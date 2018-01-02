@@ -18,34 +18,50 @@ import javafx.stage.Stage;
 
 /**
  * Loading Screen for user
+ * It allows to connect to the server, change the server and input name
  */
 public class LoadingScreen
 {
-	private Stage stage;
-	private Scene scene;
-	private GridPane grid;
-	private Button btn;
-	private Button serverChangeButton;
-	private TextField userTextField;
-	private Label connectingText;
-	private String playerName;
+	private static final int DEFAULT_PORT = 8189;
+	private static final String DEFAULT_HOSTNAME = "localhost";
+	private static final int WINDOW_WIDTH = 850;
+	private static final int WINDOW_HEIGHT = 450;
+
 	private String hostname;
 	private int port;
 	private Client myClient;
+	private GridPane grid;
+	private Label connectingText;
+	private Scene scene;
+	private Stage stage;
+	private String playerName;
+	private TextField userTextField;
 
+	/**
+	 * Creates Loading screen GUI with default port and hostname
+	 * @param primaryStage javaFX Stage
+	 */
 	public LoadingScreen(Stage primaryStage)
 	{
-		this(primaryStage, "localhost", 8189);
+		this(primaryStage, DEFAULT_HOSTNAME, DEFAULT_PORT);
 	}
 
+	/**
+	 * Creates Loading screen GUI with given port and hostname
+	 * @param primaryStage javaFX Stage
+	 * @param hostname address of server
+	 * @param port server's port
+	 */
 	public LoadingScreen(Stage primaryStage, String hostname, int port)
 	{
-		load();
-		stage = primaryStage;
-		scene = new Scene(grid, 850, 450);
-		stage.setScene(scene);
 		this.hostname = hostname;
 		this.port = port;
+		this.stage = primaryStage;
+
+		load();
+
+		scene = new Scene(grid, WINDOW_WIDTH, WINDOW_HEIGHT);
+		stage.setScene(scene);
 
 		stage.setOnCloseRequest(e ->
 		{
@@ -53,10 +69,13 @@ public class LoadingScreen
 			System.exit(0);
 		});
 
-		myClient = new Client(hostname,port);
+		myClient = new Client(hostname, port);
 	}
 
-	public void load()
+	/**
+	 * This method creates a content: container, buttons, textfield
+	 */
+	private void load()
 	{
 		grid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
@@ -66,53 +85,47 @@ public class LoadingScreen
 
 		Text text = new Text("Ch!nese Checkers    ");
 		text.setFont(Font.font("Edwardian Script ITC", 80));
-
 		text.setX(155);
 		text.setY(50);
-
 		text.setFill(Color.BEIGE);
 		text.setStrokeWidth(2);
 		text.setStroke(Color.DARKSLATEBLUE);
-		grid.add(text, 0, 2);
 
 		Text welcomeMessage = new Text("Welcome!");
 		welcomeMessage.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
 		welcomeMessage.setFill(Color.WHITE);
-		grid.add(welcomeMessage, 1, 3, 2, 1);
 
 		userTextField = new TextField();
 		userTextField.setPromptText("login");
 		userTextField.setOnKeyPressed(event ->
 		{
 			if(event.getCode() == KeyCode.ENTER)
-			{
 				login();
-			}
-
 		});
-		grid.add(userTextField, 1, 4);
 
-		btn = new Button("Sign in");
+		Button btn = new Button("Sign in");
 		btn.setOnAction(event -> login());
 
-		serverChangeButton = new Button("Change Server");
+		Button serverChangeButton = new Button("Change Server");
 		serverChangeButton.setOnAction(event -> new ChangeServer(stage));
 		serverChangeButton.setAlignment(Pos.BOTTOM_RIGHT);
 
 		HBox hbBtn = new HBox(10);
 		hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
 		hbBtn.getChildren().addAll(serverChangeButton, btn);
-		grid.add(hbBtn, 1, 5);
 
 		connectingText = new Label();
-		grid.add(connectingText, 1, 9);
-		//grid.add(serverChangeButton, 1, 6);
 
+		grid.add(text, 0, 2);
+		grid.add(welcomeMessage, 1, 3, 2, 1);
+		grid.add(userTextField, 1, 4);
+		grid.add(hbBtn, 1, 5);
+		grid.add(connectingText, 1, 9);
 		grid.setBackground(new Background(new BackgroundFill(Color.valueOf("#2c2f33"), CornerRadii.EMPTY, Insets.EMPTY)));
 	}
 
 	/**
-	 * Try Log to game and validates player name.
+	 * Tries log to game, updates connection label and validates player name.
 	 */
 	private void login()
 	{
@@ -120,7 +133,8 @@ public class LoadingScreen
 
 		if (name.matches("[\\w]+"))
 		{
-			Thread thread = new Thread(() -> {
+			Thread thread = new Thread(() ->
+			{
 				try
 				{
 					Platform.runLater(() ->

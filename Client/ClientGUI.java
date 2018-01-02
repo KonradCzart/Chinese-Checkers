@@ -2,7 +2,6 @@ package Client;
 
 import Client.GUIScreens.LoadingScreen;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 
 /**
@@ -13,13 +12,15 @@ public class ClientGUI extends Application
 	private static String hostname;
 	private static int port;
 	private static boolean defaultConnection;
+	private static final int WINDOW_WIDTH = 850;
+	private static final int WINDOW_HEIGHT = 450;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception
 	{
 		primaryStage.setTitle("Chinese Checkers Game");
-		primaryStage.setMinHeight(450);
-		primaryStage.setMinWidth(850);
+		primaryStage.setMinHeight(WINDOW_HEIGHT);
+		primaryStage.setMinWidth(WINDOW_WIDTH);
 
 		if(!defaultConnection)
 			new LoadingScreen(primaryStage, hostname, port);
@@ -29,6 +30,10 @@ public class ClientGUI extends Application
 		primaryStage.show();
 	}
 
+	/**
+	 * Starts user GUI
+	 * @param args table of params given in console
+	 */
 	public static void main(String args[])
 	{
 		defaultConnection = true;
