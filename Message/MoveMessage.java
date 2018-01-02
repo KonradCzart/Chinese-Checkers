@@ -117,5 +117,10 @@ public class MoveMessage implements Message
 	{
 		return nextMovePlayer;
 	}
+	
+	public void setNextMovePlayer(ColorPlayer player)
+	{
+		this.nextMovePlayer = player;
+	}
 
 }

@@ -17,8 +17,11 @@ public class Game
 	private Pawn lastMovePawn;
 	private ArrayList<ColorPlayer> winPlayer;
 	private ArrayList<ColorPlayer> queuePlayerTab;
+	private ArrayList<ColorPlayer> botPlayerTab;
 	
 	private ArrayList<Pawn> tabPawn;
+	
+	
 	
 	public Game(int id)
 	{
@@ -28,16 +31,51 @@ public class Game
 		tabPawn = new ArrayList<Pawn>();
 		winPlayer = new ArrayList<ColorPlayer>();
 		queuePlayerTab = new ArrayList<ColorPlayer>();
+		botPlayerTab = new ArrayList<ColorPlayer>();
 		endTurn = false;
 		lastMovePawn = null;
 		createBoard();
 		start = false;
 	}
 	
+	public void addBotToGame(ColorPlayer botPlayer)
+	{
+		botPlayerTab.add(botPlayer);
+	}
+	
+	public Boolean botQueue()
+	{
+		
+		ColorPlayer queuePlayer = queuePlayerTab.get(currentPlayer);
+		
+		for(ColorPlayer tmp : botPlayerTab)
+		{
+			if(queuePlayer == tmp)
+				return true;
+			
+		}
+		
+		return false;
+	}
+
+	public ArrayList<Pawn> getConcretPawn(ColorPlayer concret)
+	{
+		ArrayList<Pawn> newTabPawn = new ArrayList<Pawn>();
+		
+		for(Pawn tmp : tabPawn)
+		{
+			if(tmp.getPlayer() == concret)
+				newTabPawn.add(tmp);
+		}
+		
+		return newTabPawn;
+	}
+	
 	public ArrayList<Pawn> getArrayPawn()
 	{
 		return tabPawn;
 	}
+	
 	public Boolean winPlayer(ColorPlayer player)
 	{
 		Boolean win = false;
@@ -80,6 +118,7 @@ public class Game
 		
 		return win;
 	}
+	
 	public Boolean pawnInZone(ColorPlayer player, Zone zone,int number)
 	{
 		int count = 0;

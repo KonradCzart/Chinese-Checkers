@@ -233,7 +233,12 @@ public class GameScreen
 		MenuItem botAdd = new MenuItem("Bot add");
 		botAdd.setOnAction(event ->
 		{
-			//TODO);
+			SuccessMessage newMessage = new SuccessMessage(33333, "add bot");
+			try {
+				myClient.sendMessage(newMessage);
+			} catch (IOException e) {
+				System.out.println("Removing game failure..");
+			}
 		});
 
 		MenuItem removeGame = new MenuItem(("Remove game"));
@@ -289,7 +294,7 @@ public class GameScreen
 			System.exit(0);
 		});
 
-		menuFile.getItems().addAll(joinGame, createGame, changeServer, setName, new SeparatorMenuItem(),removeGame, exit);
+		menuFile.getItems().addAll(joinGame, createGame, changeServer, setName, botAdd, new SeparatorMenuItem(),removeGame, exit);
 		menuBar.getMenus().addAll(menuFile, menuHelp);
 
 		MenuItem authorsInfo = new MenuItem("About..");

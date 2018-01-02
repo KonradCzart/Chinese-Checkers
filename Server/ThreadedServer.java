@@ -15,6 +15,7 @@ import Message.*;
 public class ThreadedServer implements Runnable {
 	private ArrayList<ClientHandler> client;
 	private ArrayList<Game> tabGame;
+	private ArrayList<CheckersBot> tabBot;
 	private static ThreadedServer instance;
 	private boolean serverRun;
 	private static int countIdGame;
@@ -24,6 +25,7 @@ public class ThreadedServer implements Runnable {
 	{
 		client = new ArrayList<ClientHandler>();
 		tabGame = new ArrayList<Game>();
+		tabBot = new ArrayList<CheckersBot>();
 		countIdGame = 1;
 	}
 	
@@ -347,6 +349,51 @@ public class ThreadedServer implements Runnable {
 								
 								this.sendMessageToGame(okMove);
 								
+								//=======================================
+								while(myGame.botQueue())
+								{
+									MoveMessage botMove = null;
+									for(CheckersBot bot : tabBot)
+									{
+										if(bot.getGameID() == this.gameID && bot.getBotPlayer() == myGame.getQueuePlayer());
+										{
+											botMove = bot.moveBot();
+											
+											if(botMove.getEndTurn())
+											{
+												this.sendMessageToGame(botMove);
+											}
+											else
+											{
+												try {
+													myGame.endMove(bot.getBotPlayer());
+													ColorPlayer nextPlayer = myGame.getQueuePlayer();
+													botMove.setMovePlayer(bot.getBotPlayer());
+													botMove.setNextMovePlayer(nextPlayer);
+													
+													String nextPlayerString = "Bot";
+													
+													for (ClientHandler tmp : client)
+													{
+													
+														if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextColorPlayer)
+														{
+															nextNamePlayer = tmp.getName();
+															break;
+														}
+													}
+													
+													botMove.setNextTurnPlayerName(nextPlayerString);
+													this.sendMessageToGame(botMove);
+												} catch (BadPlayerException e) {
+												}
+											}
+										}
+									}
+								}
+								//========================================================
+								
+								
 							} catch (BadPlayerException e) 
 							{
 								// TODO Auto-generated catch block for later
@@ -424,7 +471,7 @@ public class ThreadedServer implements Runnable {
 										}
 									}
 									ColorPlayer nextColorPlayer = myGame.getQueuePlayer();
-									String nextNamePlayer = "";
+									String nextNamePlayer = "Bot";
 								
 									for (ClientHandler tmp : client)
 									{
@@ -439,6 +486,49 @@ public class ThreadedServer implements Runnable {
 									MoveMessage okMove = new MoveMessage(true, nextColorPlayer, myPlayer, nextNamePlayer);
 								
 									this.sendMessageToGame(okMove);
+									
+									while(myGame.botQueue())
+									{
+										MoveMessage botMove = null;
+										for(CheckersBot bot : tabBot)
+										{
+											if(bot.getGameID() == this.gameID && bot.getBotPlayer() == myGame.getQueuePlayer());
+											{
+												System.out.println(bot.getBotPlayer());
+												botMove = bot.moveBot();
+												
+												if(botMove.getEndTurn())
+												{
+													this.sendMessageToGame(botMove);
+												}
+												else
+												{
+													try {
+														myGame.endMove(bot.getBotPlayer());
+														ColorPlayer nextPlayer = myGame.getQueuePlayer();
+														botMove.setMovePlayer(bot.getBotPlayer());
+														botMove.setNextMovePlayer(nextPlayer);
+														
+														String nextPlayerString = "Bot";
+														
+														for (ClientHandler tmp : client)
+														{
+														
+															if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextColorPlayer)
+															{
+																nextNamePlayer = tmp.getName();
+																break;
+															}
+														}
+														
+														botMove.setNextTurnPlayerName(nextPlayerString);
+														this.sendMessageToGame(botMove);
+													} catch (BadPlayerException e) {
+													}
+												}
+											}
+										}
+									}
 								
 								}
 								else
@@ -468,6 +558,18 @@ public class ThreadedServer implements Runnable {
 										tmp.exitGame();
 									}
 								}
+							}
+							
+						}
+						else if(succes.getCodSuccess() == 33333)
+						{
+							if(myGame != null)
+							{
+								ColorPlayer botColor = myGame.addPalyer();
+								CheckersBot bot = new CheckersBot(botColor, myGame, myGame.getID());
+								tabBot.add(bot);
+								myGame.addBotToGame(botColor);
+								bot.setPawn(myGame.getConcretPawn(botColor));
 							}
 							
 						}
