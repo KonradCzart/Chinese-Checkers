@@ -230,6 +230,12 @@ public class GameScreen
 		MenuItem joinGame = new MenuItem(("Join the game"));
 		joinGame.setOnAction(event -> gameIdDialog());
 
+		MenuItem botAdd = new MenuItem("Bot add");
+		botAdd.setOnAction(event ->
+		{
+			//TODO);
+		});
+
 		MenuItem removeGame = new MenuItem(("Remove game"));
 		removeGame.setOnAction(event ->
 		{
@@ -552,9 +558,12 @@ public class GameScreen
 	 */
 	public void getPlayerNameColored(String name, ColorPlayer colorPlayer)
 	{
-		String line = "Now round: " + name;
-		playerNameText.setText(line);
-		setBoardCircleColor(playerNameText, colorPlayer);
+		if(arePawnsAdded)
+		{
+			String line = "Now round: " + name;
+			playerNameText.setText(line);
+			setBoardCircleColor(playerNameText, colorPlayer);
+		}
 	}
 
 	/**
