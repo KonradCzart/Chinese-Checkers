@@ -22,7 +22,10 @@ public class Game
 	private ArrayList<Pawn> tabPawn;
 	
 	
-	
+	/**
+	 * Constructor new game
+	 * @param id Special id for game
+	 */
 	public Game(int id)
 	{
 		this.id = id;
@@ -38,11 +41,19 @@ public class Game
 		start = false;
 	}
 	
+	/**
+	 * Add bot for game
+	 * @param botPlayer
+	 */
 	public void addBotToGame(ColorPlayer botPlayer)
 	{
 		botPlayerTab.add(botPlayer);
 	}
 	
+	/**
+	 * 
+	 * @return true if it is bot queue and false if it is queue player
+	 */
 	public Boolean botQueue()
 	{
 		
@@ -57,7 +68,12 @@ public class Game
 		
 		return false;
 	}
-
+	
+	/**
+	 * 
+	 * @param concret Player what color pawns are to be returned
+	 * @return ArrayList<Pawn> for concert player
+	 */
 	public ArrayList<Pawn> getConcretPawn(ColorPlayer concret)
 	{
 		ArrayList<Pawn> newTabPawn = new ArrayList<Pawn>();
@@ -71,11 +87,21 @@ public class Game
 		return newTabPawn;
 	}
 	
+	/**
+	 * 
+	 * @return ArrayList<Pawn> all pawns with game
+	 */
 	public ArrayList<Pawn> getArrayPawn()
 	{
 		return tabPawn;
 	}
 	
+	
+	/**
+	 * 
+	 * @param player Checks whether the player has won
+	 * @return true if Player won
+	 */
 	public Boolean winPlayer(ColorPlayer player)
 	{
 		Boolean win = false;
@@ -119,6 +145,14 @@ public class Game
 		return win;
 	}
 	
+	
+	/**
+	 * Checks if the pawns are in a given zone
+	 * @param player ColorPlayer which pawns are to be checked
+	 * @param zone Checked zone
+	 * @param number Count checked pawns
+	 * @return
+	 */
 	public Boolean pawnInZone(ColorPlayer player, Zone zone,int number)
 	{
 		int count = 0;
@@ -144,6 +178,11 @@ public class Game
 			return false;
 	}
 	
+	/**
+	 * End move for concert given player
+	 * @param movePlayer The player who has the queue to access the game
+	 * @throws BadPlayerException The given player has no access to the game
+	 */
 	public void endMove(ColorPlayer movePlayer) throws BadPlayerException
 	{
 		ColorPlayer queuePlayer = queuePlayerTab.get(currentPlayer);
@@ -168,12 +207,26 @@ public class Game
 
 	}
 	
+	/**
+	 * 
+	 * @return ColorPlayer who has access to the game
+	 */
 	public ColorPlayer getQueuePlayer()
 	{
 		ColorPlayer queue = queuePlayerTab.get(currentPlayer);
 		return queue;
 	}
 	
+	/**
+	 * Method that performs the movements of the pawns
+	 * @param movePlayer The player who makes the move
+	 * @param oldX old X pawn position
+	 * @param oldY old Y pawn position
+	 * @param newX new X pawn position
+	 * @param newY new Y pawn position
+	 * @throws BadPlayerException Incorrect player
+	 * @throws IncorrectMoveException Incorrect move
+	 */
 	public void move(ColorPlayer movePlayer, int oldX, int oldY, int newX, int newY) throws BadPlayerException, IncorrectMoveException
 	{
 
@@ -251,12 +304,18 @@ public class Game
 		
 	}
 		
-	
+	/**
+	 * 
+	 * @return The game ID
+	 */
 	public int getID()
 	{
 		return id;
 	}
 	
+	/**
+	 * Start the game
+	 */
 	public void startGame()
 	{
 		
@@ -268,11 +327,19 @@ public class Game
 		currentPlayer = a;
 	}
 	
+	/**
+	 * 
+	 * @return true if game is start and false isn't start
+	 */
 	public Boolean getStartStatus()
 	{
 		return start;
 	}
 	
+	/**
+	 * Add player to game
+	 * @return ColorPlayer received pawn
+	 */
 	public ColorPlayer addPalyer()
 	{
 		if(!start)
@@ -348,6 +415,15 @@ public class Game
 
 	}
 	
+	/**
+	 * Method for testing move correct
+	 * @param oldX old X pawn position
+	 * @param oldY old Y pawn position
+	 * @param newX new X pawn position
+	 * @param newY new Y pawn position
+	 * @param special Was there a jump
+	 * @return true if move is correct
+	 */
 	public Boolean moveValidate(int oldX, int oldY, int newX, int newY, Boolean special)
 	{
 		int tmpX;
@@ -513,6 +589,10 @@ public class Game
 		}
 	}
 	
+	/**
+	 * 
+	 * @return Count player with game
+	 */
 	public int getCountPlayer() 
 	{
 		return countPlayer;
@@ -620,7 +700,9 @@ public class Game
 				
 	}
 
-	//test createBoard
+	/**
+	 * Paint console version board
+	 */
 	public void getPaint()
 	{
 		FieldStatus currentStatus;

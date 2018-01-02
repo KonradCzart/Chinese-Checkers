@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 import Message.MoveMessage;
 
+
+/**
+ * 
+ * @author Konrad Czart
+ *	Stupid bot for testing the game
+ */
 public class CheckersBot 
 {
 	private ColorPlayer myPlayer;
@@ -16,7 +22,12 @@ public class CheckersBot
 	private int goalY;
 	private Boolean finishGoal;
 
-	
+	/**
+	 * 
+	 * @param myPlayer Color of pawns to move
+	 * @param myGame Game for bot
+	 * @param gameID Game id for the bot
+	 */
 	public CheckersBot(ColorPlayer myPlayer, Game myGame, int gameID)
 	{
 		tabPawnGoal = new ArrayList<Pawn>();
@@ -29,11 +40,14 @@ public class CheckersBot
 
 	}
 	
+	/**
+	 * 
+	 * @return MoveMessage for the customer about the movement made by the bot
+	 */
 	public MoveMessage moveBot()
 	{
 
 		Boolean move = false;
-		Pawn removePawn = null;
 		
 		int roadX;
 		int roadY;
@@ -75,21 +89,33 @@ public class CheckersBot
 		return moveMessage;
 	}
 	
+	/**
+	 * 
+	 * @return current gameID
+	 */
 	public int getGameID()
 	{
 		return gameID;
 	}
 	
+	/**
+	 * 
+	 * @return Game id
+	 */
 	public ColorPlayer getBotPlayer()
 	{
 		return myPlayer;
 	}
 	
+	
+	/**
+	 * Logic move bot
+	 */
 	private Boolean getMoveRoad(int lengthX, int lengthY, Pawn currentPawn, int count)
 	{
 		Boolean move = false;
 
-		int road = 0;
+
 		int pawnX = currentPawn.getX();
 		int pawnY = currentPawn.getY();
 		int tmpX =0;
@@ -148,8 +174,8 @@ public class CheckersBot
 				move = false;
 			}
 			
-			tmpX = pawnX - count;
-			tmpY = pawnY;
+			tmpX = pawnX;
+			tmpY = pawnY + count;
 			try {
 				myGame.move(myPlayer, pawnX, pawnY, tmpX, tmpY);
 				currentPawn.setX(tmpX);
@@ -217,6 +243,10 @@ public class CheckersBot
 		return move;
 	}
 	
+	/**
+	 * Adds pawns to the bot that it can move
+	 * @param tabPawn ArrayList<Pawn> Pawns for bot
+	 */
 	public void setPawn(ArrayList<Pawn> tabPawn)
 	{
 		this.tabPawn = tabPawn;
