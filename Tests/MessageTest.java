@@ -5,6 +5,7 @@ import Game.ColorPlayer;
 import Message.*;
 import Server.ThreadedServer;
 import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import org.junit.*;
 
 import java.io.IOException;
@@ -17,13 +18,15 @@ import static org.junit.Assert.fail;
  */
 public class MessageTest
 {
-	ThreadedServer server;
-	Thread serverThread;
-	Client myClient;
+	private ThreadedServer server;
+	private Thread serverThread;
+	private Client myClient;
 
 	@Before
 	public void setUp()
 	{
+		JFXPanel fxPanel = new JFXPanel();
+
 		server = ThreadedServer.getInstance();
 		if(server.isThreadedServerRun())
 		{
