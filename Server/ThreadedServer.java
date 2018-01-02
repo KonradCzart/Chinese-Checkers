@@ -21,7 +21,7 @@ public class ThreadedServer implements Runnable {
 	private boolean serverRun;
 	private static int countIdGame;
 	
-	//coment
+
 	private ThreadedServer()
 	{
 		client = new ArrayList<ClientHandler>();
@@ -42,7 +42,11 @@ public class ThreadedServer implements Runnable {
 	     }     
 		 return instance;
 	}
-
+	
+	/**
+	 * 
+	 * @return Status is started server
+	 */
 	public boolean isThreadedServerRun()
 	{
 		return serverRun;
@@ -63,7 +67,11 @@ public class ThreadedServer implements Runnable {
 		return clientName;
 	}
 	
+
 	@Override
+	/**
+	 * Run thread server
+	 */
 	public void run() 
 	{
 		try 
@@ -91,7 +99,12 @@ public class ThreadedServer implements Runnable {
 		}		
 	}
 
-	// internal class client
+	/**
+	 * 
+	 * @author Konrad Czart
+	 * Private Class for connecting with server
+	 * Send special message for client with concert command
+	 */
 	private class ClientHandler implements Runnable 
 	{
 		
@@ -486,16 +499,23 @@ public class ThreadedServer implements Runnable {
 						{
 							if(myGame != null)
 							{
+								if(!myGame.getStartStatus())
+								{
+									ColorPlayer botColor = myGame.addPalyer();
+									CheckersBot bot = new CheckersBot(botColor, myGame, myGame.getID());
+									tabBot.add(bot);
+									myGame.addBotToGame(botColor);
+									bot.setPawn(myGame.getConcretPawn(botColor));
 								
-								ColorPlayer botColor = myGame.addPalyer();
-								CheckersBot bot = new CheckersBot(botColor, myGame, myGame.getID());
-								tabBot.add(bot);
-								myGame.addBotToGame(botColor);
-								bot.setPawn(myGame.getConcretPawn(botColor));
-								
-								String line = "Add bot for game: " + gameID;
-								ChatMessage newChatMessage = new ChatMessage(line);
-								this.sendMessageToGame(newChatMessage);
+									String line = "Add bot for game: " + gameID;
+									ChatMessage newChatMessage = new ChatMessage(line);
+									this.sendMessageToGame(newChatMessage);
+								}
+								else
+								{
+									FailMessage fail = new FailMessage(12589, "You can't add bot!");
+									this.sendMessageToGame(fail);
+								}
 							}
 							
 						}
@@ -540,6 +560,19 @@ public class ThreadedServer implements Runnable {
 								myGame.endMove(bot.getBotPlayer());
 								ColorPlayer nextPlayer2 = myGame.getQueuePlayer();
 								botMove.setNextMovePlayer(nextPlayer2);
+								String name2 = "Bot";
+								for (ClientHandler tmp : client)
+								{
+								
+									if(tmp.getGameID() == this.gameID && tmp.getMyplayer() == nextPlayer2)
+									{
+										name2 = tmp.getName();
+										break;
+									}
+								}
+								
+								botMove.setNextTurnPlayerName(name2);
+								
 								try {
 									this.sendMessageToGame(botMove);
 								} catch (IOException e) {
