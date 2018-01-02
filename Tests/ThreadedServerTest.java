@@ -14,8 +14,7 @@ import static org.junit.Assert.*;
  */
 public class ThreadedServerTest {
 
-	ThreadedServer server;
-	Thread serverThread;
+	private ThreadedServer server;
 
 	@Before
 	public void setUp()
@@ -24,7 +23,7 @@ public class ThreadedServerTest {
 		if(server.isThreadedServerRun())
 		{
 			Runnable r = server;
-			serverThread = new Thread(r);
+			Thread serverThread = new Thread(r);
 			serverThread.start();
 		}
 	}
@@ -58,10 +57,7 @@ public class ThreadedServerTest {
 					}
 				});
 				Thread.sleep(1000);
-				Platform.runLater(() ->
-				{
-					assertNotNull(server.getClientName().get(0));
-				});
+				Platform.runLater(() -> assertNotNull(server.getClientName().get(0)));
 			}
 			catch (InterruptedException e)
 			{
