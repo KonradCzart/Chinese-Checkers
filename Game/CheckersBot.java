@@ -11,20 +11,22 @@ public class CheckersBot
 	private Game myGame;
 	private int gameID;
 	private ArrayList<Pawn> tabPawn;
+	private ArrayList<Pawn> tabPawnGoal;
 	private int goalX;
 	private int goalY;
 	private Boolean finishGoal;
-	Boolean remove;
+
 	
 	public CheckersBot(ColorPlayer myPlayer, Game myGame, int gameID)
 	{
+		tabPawnGoal = new ArrayList<Pawn>();
 		this.myPlayer = myPlayer;
 		this.gameID = gameID;
 		this.myGame = myGame;
 		moveMessage = null;
 		setGoal(myPlayer);
 		finishGoal = false;
-		remove = false;
+
 	}
 	
 	public MoveMessage moveBot()
@@ -38,56 +40,37 @@ public class CheckersBot
 		
 		for(Pawn tmp : tabPawn)
 		{
-			roadX = tmp.getX() - goalX;
-			roadY = tmp.getY() - goalY;
-			
-			move = this.getMoveRoad(roadX, roadY, tmp, 2);
-			if(move)
+			if(!tabPawnGoal.contains(tmp))
 			{
-				removePawn = tmp;
-				break;
+				roadX = tmp.getX() - goalX;
+				roadY = tmp.getY() - goalY;
+			
+				move = this.getMoveRoad(roadX, roadY, tmp, 2);
+				if(move)
+				{
+					return moveMessage;
+				}
 			}
 				
-		}
-		
-		if(remove)
-		{
-			remove = false;
-			tabPawn.remove(removePawn);
-		}
-		
-		if(move)
-		{
-			return moveMessage;
 		}
 		
 		
 		for(Pawn tmp : tabPawn)
 		{
-			roadX = tmp.getX() - goalX;
-			roadY = tmp.getY() - goalY;
-			
-			move = this.getMoveRoad(roadX, roadY, tmp, 1);
-			
-			if(move)
+			if(!tabPawnGoal.contains(tmp))
 			{
-				removePawn = tmp;
-				break;
+				roadX = tmp.getX() - goalX;
+				roadY = tmp.getY() - goalY;
+			
+				move = this.getMoveRoad(roadX, roadY, tmp, 1);
+				if(move)
+				{
+					return moveMessage;
+				}
 			}
 				
 		}
 		
-		if(remove)
-		{
-			remove = false;
-			tabPawn.remove(removePawn);
-		}
-		
-		if(move)
-		{
-			
-			return moveMessage;
-		}
 		moveMessage = new MoveMessage(true);
 		return moveMessage;
 	}
@@ -120,7 +103,7 @@ public class CheckersBot
 		if(Math.abs(lengthX) < 3 && Math.abs(lengthY) < 3 && finishGoal)
 		{
 			move = false;
-			remove = true;
+			tabPawnGoal.add(currentPawn);
 		}
 		else if(lengthX >= 0 && lengthY >= 0)
 		{
@@ -229,8 +212,7 @@ public class CheckersBot
 				move = false;
 			}
 		}
-		if(remove)
-			tabPawn.remove(currentPawn);
+
 		
 		return move;
 	}
