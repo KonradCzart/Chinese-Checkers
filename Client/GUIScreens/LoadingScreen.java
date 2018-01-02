@@ -106,7 +106,7 @@ public class LoadingScreen
 		Button btn = new Button("Sign in");
 		btn.setOnAction(event -> login());
 
-		Button serverChangeButton = new Button("Change Server");
+		Button serverChangeButton = new Button("Options");
 		serverChangeButton.setOnAction(event -> new ChangeServer(stage));
 		serverChangeButton.setAlignment(Pos.BOTTOM_RIGHT);
 

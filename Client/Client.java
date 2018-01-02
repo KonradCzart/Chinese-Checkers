@@ -15,10 +15,13 @@ public class Client
 	private String localhost;
 	private int port;
 
+	private static final int DEFAULT_PORT = 8189;
+	private static final String DEFAULT_HOSTNAME = "localhost";
+
 	public Client()
 	{
-		localhost = "localhost";
-		port = 8189;
+		localhost = DEFAULT_HOSTNAME;
+		port = DEFAULT_PORT;
 	}
 
 	public Client(String localhost, int adress)

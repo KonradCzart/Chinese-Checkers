@@ -12,7 +12,7 @@ import javafx.util.Pair;
 import java.util.Optional;
 
 /**
- * Created by Kacper on 2018-01-01.
+ * Class create Dialog window, check if parameters are ok and change server
  */
 public class ChangeServer
 {
@@ -21,12 +21,10 @@ public class ChangeServer
 	public ChangeServer(Stage stage)
 	{
 		this.stage = stage;
-		// Create the custom dialog.
 		Dialog<Pair<String, String>> dialog = new Dialog<>();
 		dialog.setTitle("Connect to server");
 		dialog.setHeaderText("");
 
-		// Set the button types.
 		ButtonType loginButtonType = new ButtonType("Reconnect", ButtonBar.ButtonData.OK_DONE);
 		dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
 
@@ -45,21 +43,17 @@ public class ChangeServer
 		grid.add(new Label("Port: "), 0, 1);
 		grid.add(port, 1, 1);
 
-		// Enable/Disable login button depending on whether a username was entered.
 		Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
 		loginButton.setDisable(true);
 
-		// Do some validation (using the Java 8 lambda syntax).
 		hostname.textProperty().addListener((observable, oldValue, newValue) -> {
 			loginButton.setDisable(newValue.trim().isEmpty());
 		});
 
 		dialog.getDialogPane().setContent(grid);
 
-		// Request focus on the username field by default.
 		Platform.runLater(() -> hostname.requestFocus());
 
-		// Convert the result to a username-password-pair when the login button is clicked.
 		dialog.setResultConverter(dialogButton -> {
 			if (dialogButton == loginButtonType) {
 				return new Pair<>(hostname.getText(), port.getText());

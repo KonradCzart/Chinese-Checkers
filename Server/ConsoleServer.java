@@ -3,7 +3,7 @@ package Server;
 import java.util.Scanner;
 
 /**
- * Created by Kacper on 2018-01-02.
+ * Simply console server.
  */
 public class ConsoleServer
 {
@@ -19,10 +19,12 @@ public class ConsoleServer
 		{
 			defaultConnection = false;
 			hostname = args[0];
-
 			try
 			{
-				port = Integer.parseInt(args[1]);
+				if(port > 0 && port <= 65535)
+					port = Integer.parseInt(args[1]);
+				else
+					defaultConnection = true;
 			}
 			catch(NumberFormatException e)
 			{
@@ -30,9 +32,19 @@ public class ConsoleServer
 			}
 		}
 
-		ThreadedServer server = ThreadedServer.getInstance();
-		Thread serverThread = new Thread(server);
-		serverThread.start();
+		if(defaultConnection)
+		{
+			ThreadedServer server = ThreadedServer.getInstance();
+			Thread serverThread = new Thread(server);
+			serverThread.start();
+		}
+		else
+		{
+			ThreadedServer server = ThreadedServer.getInstance(hostname, port);
+			Thread serverThread = new Thread(server);
+			serverThread.start();
+		}
+
 
 		Scanner scan = new Scanner(System.in);
 		try
