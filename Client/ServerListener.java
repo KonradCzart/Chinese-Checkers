@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.*;
 import Client.GUIScreens.GameScreen;
+import Client.GUIScreens.LoadingScreen;
 import Game.ColorPlayer;
 import Message.*;
+import javafx.application.Platform;
 
 public class ServerListener implements Runnable
 {
@@ -100,11 +102,11 @@ public class ServerListener implements Runnable
 			}
 			
 			
-		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
 		}
-		
-		System.out.println("End of listener");
+		catch (IOException | ClassNotFoundException e)
+		{
+			Platform.runLater(() -> game.lostConnection());
+		}
 	}
 
 }

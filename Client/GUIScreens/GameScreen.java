@@ -761,4 +761,12 @@ public class GameScreen
 		});
 
 	}
+
+	/**
+	 * Creates new LoadingScreen object when ServerListener lost connection
+	 */
+	public void lostConnection()
+	{
+		new LoadingScreen(stage);
+	}
 }
