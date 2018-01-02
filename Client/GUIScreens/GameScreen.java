@@ -36,6 +36,8 @@ public class GameScreen
 	private BorderPane border;
 	private BoardCircle clickedBoardCircle;
 	private BoardCircle[][] tabField;
+	private Button startGameButton;
+	private Button endRoundButton;
 	private Client myClient;
 	private HBox topHBox;
 	private Paint lastClickedColor;
@@ -219,6 +221,10 @@ public class GameScreen
 		MenuItem createGame = new MenuItem(("Create the game"));
 		createGame.setOnAction(event ->
 		{
+			startGameButton.setDisable(false);
+			endRoundButton.setDisable(false);
+			playerNameText.setText("");
+
 			JoinGameMessage newJoinMessage = new JoinGameMessage(0, true);
 			try {
 				myClient.sendMessage(newJoinMessage);
@@ -228,7 +234,13 @@ public class GameScreen
 		});
 
 		MenuItem joinGame = new MenuItem(("Join the game"));
-		joinGame.setOnAction(event -> gameIdDialog());
+		joinGame.setOnAction(event ->
+		{
+			startGameButton.setDisable(false);
+			endRoundButton.setDisable(false);
+			playerNameText.setText("");
+			gameIdDialog();
+		});
 
 		MenuItem botAdd = new MenuItem("Bot add");
 		botAdd.setOnAction(event ->
@@ -314,7 +326,10 @@ public class GameScreen
 	 */
 	private void addPlayerNameText()
 	{
-		playerNameText = new Text("");
+		playerNameText = new Text("<-- Create the game or join to game!");
+		playerNameText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+		playerNameText.setFill(Color.valueOf("#FFFFFF"));
+		playerNameText.setTranslateY(5);
 		topHBox.getChildren().add(playerNameText);
 	}
 
@@ -360,14 +375,22 @@ public class GameScreen
 	{
 		HBox stack = new HBox();
 
-		Button startGameButton = new Button("Start");
-		Button endRoundButton = new Button("EndRound");
+		Text infoText = new Text();
+		infoText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+		infoText.setFill(Color.valueOf("#FFFFFF"));
+
+		startGameButton = new Button("Start game!");
+		endRoundButton = new Button("EndRound");
 
 		startGameButton.setPrefSize(100, 20);
+		startGameButton.setDisable(true);
+		endRoundButton.setDisable(true);
 		endRoundButton.setPrefSize(100, 20);
 
 		startGameButton.setOnAction(event ->
 		{
+			infoText.setText("Remember to click EndRound button after move! --> ");
+			startGameButton.setDisable(true);
 			SuccessMessage newMessage = new SuccessMessage(11111, "start game");
 			try {
 				myClient.sendMessage(newMessage);
@@ -378,6 +401,7 @@ public class GameScreen
 
 		endRoundButton.setOnAction(event ->
 		{
+			infoText.setText("");
 			MoveMessage newMessage = new MoveMessage(true);
 			try {
 				myClient.sendMessage(newMessage);
@@ -387,7 +411,7 @@ public class GameScreen
 		});
 
 		stack.setSpacing(8);
-		stack.getChildren().addAll(endRoundButton, startGameButton);
+		stack.getChildren().addAll(infoText, endRoundButton, startGameButton);
 		stack.setAlignment(Pos.CENTER_RIGHT);
 		StackPane.setMargin(startGameButton, new Insets(0, 10, 0, 0));
 
@@ -436,7 +460,7 @@ public class GameScreen
 		chatBox.getChildren().add(title);
 		flow.setTop(scrollPane);
 
-		HBox tmpHBox= new HBox();
+		HBox tmpHBox = new HBox();
 		tmpHBox.setSpacing(15);
 		tmpHBox.setAlignment(Pos.CENTER);
 		tmpHBox.getChildren().addAll(chatField, sendChatButton);
@@ -732,6 +756,7 @@ public class GameScreen
 		Platform.runLater(() -> {
 			this.createBoard();
 			border.setCenter(addBoardPane());
+			startGameButton.setDisable(true);
 			arePawnsAdded = false;
 		});
 
